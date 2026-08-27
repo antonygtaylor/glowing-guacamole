@@ -540,9 +540,10 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
   card.className = 'phrase-card';
 
   const flags = typeof LANGUAGE_FLAGS !== 'undefined' ? LANGUAGE_FLAGS : {};
-  const langMeta = flags[phrase.lang || state.currentLang] || flags['es-ES'] || { flag: '🇪🇸', name: 'Spanish' };
+  const langMeta = flags[phrase.lang || state.currentLang] || flags['es-ES'] || { name: 'Spanish' };
 
   card.innerHTML = `
+    ${langMeta.landmarkSvg || ''}
     <div class="phrase-card__header">
       <span class="phrase-card__category">${phrase.topic}</span>
       <span class="lang-badge">${langMeta.svg || ''} ${langMeta.name}</span>

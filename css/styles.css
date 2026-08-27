@@ -535,6 +535,7 @@ body {
 }
 
 .phrase-card {
+  position: relative;
   background-color: var(--md-sys-color-surface-container-lowest);
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 16px;
@@ -545,6 +546,27 @@ body {
   gap: 12px;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: var(--md-elevation-1);
+  overflow: hidden;
+}
+
+/* Cel-shaded Stylized Landmark Background SVG */
+.landmark-bg-svg {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(1px 1px 0px rgba(0,0,0,0.5));
+}
+
+.phrase-card__header,
+.phrase-card__body,
+.phrase-card__actions {
+  position: relative;
+  z-index: 1;
 }
 
 .phrase-card:hover {

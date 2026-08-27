@@ -1,99 +1,117 @@
 /**
- * API, Phrase Catalog, and SVG Flag Metadata Module
- * Provides structured topics, translations, and universal SVG flag icons.
- * Replaces OS flag emojis with inline SVGs for guaranteed cross-platform rendering (Windows, macOS, Linux, iOS, Android).
+ * API, Phrase Catalog, SVG Flag Metadata, and Cel-Shaded Landmark Art Module
+ * Provides structured topics, translations, universal SVG flag icons,
+ * and stylized cel-shaded SVG landmark background artwork for 18 nations.
  */
 
 const LANGUAGE_FLAGS = {
   "es-ES": {
     name: "Spanish",
     native: "Español",
-    svg: `<svg class="flag-svg" viewBox="0 0 750 500" xmlns="http://www.w3.org/2000/svg"><rect width="750" height="500" fill="#c60b1e"/><rect y="125" width="750" height="250" fill="#ffc400"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 750 500" xmlns="http://www.w3.org/2000/svg"><rect width="750" height="500" fill="#c60b1e"/><rect y="125" width="750" height="250" fill="#ffc400"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M0,220 L600,220" stroke="#f1c40f" stroke-width="4" stroke-dasharray="10 10"/><polygon points="250,220 280,100 290,100 295,40 305,40 310,100 320,100 350,220" fill="none" stroke="#e74c3c" stroke-width="4" stroke-linejoin="round"/><circle cx="300" cy="30" r="8" fill="#f1c40f" stroke="#e74c3c" stroke-width="3"/><rect x="230" y="160" width="140" height="60" fill="none" stroke="#e74c3c" stroke-width="4"/><path d="M150,220 L180,120 L210,220 M390,220 L420,120 L450,220" fill="none" stroke="#e74c3c" stroke-width="4"/><circle cx="180" cy="110" r="6" fill="#f1c40f"/><circle cx="420" cy="110" r="6" fill="#f1c40f"/></svg>`
   },
   "fr-FR": {
     name: "French",
     native: "Français",
-    svg: `<svg class="flag-svg" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#002395"/><rect x="300" width="300" height="600" fill="#fff"/><rect x="600" width="300" height="600" fill="#ed2939"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#002395"/><rect x="300" width="300" height="600" fill="#fff"/><rect x="600" width="300" height="600" fill="#ed2939"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M220,240 L280,140 L290,60 L300,20 L310,60 L320,140 L380,240 M260,170 L340,170 M275,110 L325,110" fill="none" stroke="#3498db" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M260,240 Q300,200 340,240" fill="none" stroke="#3498db" stroke-width="5"/><circle cx="300" cy="12" r="5" fill="#e74c3c"/></svg>`
   },
   "de-DE": {
     name: "German",
     native: "Deutsch",
-    svg: `<svg class="flag-svg" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg"><rect width="5" height="3" fill="#000"/><rect y="1" width="5" height="2" fill="#dd0000"/><rect y="2" width="5" height="1" fill="#ffce00"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg"><rect width="5" height="3" fill="#000"/><rect y="1" width="5" height="2" fill="#dd0000"/><rect y="2" width="5" height="1" fill="#ffce00"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="180" y="100" width="240" height="25" fill="none" stroke="#f1c40f" stroke-width="5"/><rect x="200" y="125" width="20" height="105" fill="none" stroke="#f1c40f" stroke-width="4"/><rect x="240" y="125" width="20" height="105" fill="none" stroke="#f1c40f" stroke-width="4"/><rect x="280" y="125" width="20" height="105" fill="none" stroke="#f1c40f" stroke-width="4"/><rect x="320" y="125" width="20" height="105" fill="none" stroke="#f1c40f" stroke-width="4"/><rect x="360" y="125" width="20" height="105" fill="none" stroke="#f1c40f" stroke-width="4"/><polygon points="280,100 300,60 320,100" fill="none" stroke="#e74c3c" stroke-width="4"/></svg>`
   },
   "it-IT": {
     name: "Italian",
     native: "Italiano",
-    svg: `<svg class="flag-svg" viewBox="0 0 1500 1000" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="1000" fill="#009246"/><rect x="500" width="500" height="1000" fill="#fff"/><rect x="1000" width="500" height="1000" fill="#ce2b37"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 1500 1000" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="1000" fill="#009246"/><rect x="500" width="500" height="1000" fill="#fff"/><rect x="1000" width="500" height="1000" fill="#ce2b37"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M160,230 C160,130 440,130 440,230" fill="none" stroke="#2ecc71" stroke-width="6"/><path d="M190,230 L190,160 M240,230 L240,140 M300,230 L300,135 M360,230 L360,140 M410,230 L410,160" stroke="#2ecc71" stroke-width="4"/><line x1="150" y1="230" x2="450" y2="230" stroke="#2ecc71" stroke-width="6"/></svg>`
   },
   "pt-PT": {
     name: "Portuguese",
     native: "Português",
-    svg: `<svg class="flag-svg" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"><rect width="240" height="400" fill="#046a38"/><rect x="240" width="360" height="400" fill="#da291c"/><circle cx="240" cy="200" r="80" fill="#ffc400"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"><rect width="240" height="400" fill="#046a38"/><rect x="240" width="360" height="400" fill="#da291c"/><circle cx="240" cy="200" r="80" fill="#ffc400"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="220" y="110" width="160" height="120" fill="none" stroke="#e67e22" stroke-width="5"/><polygon points="220,110 240,70 360,70 380,110" fill="none" stroke="#e67e22" stroke-width="4"/><rect x="280" y="150" width="40" height="80" fill="none" stroke="#e67e22" stroke-width="4"/></svg>`
   },
   "nl-NL": {
     name: "Dutch",
     native: "Nederlands",
-    svg: `<svg class="flag-svg" viewBox="0 0 9 6" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="6" fill="#ae1c28"/><rect y="2" width="9" height="4" fill="#fff"/><rect y="4" width="9" height="2" fill="#21468b"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 9 6" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="6" fill="#ae1c28"/><rect y="2" width="9" height="4" fill="#fff"/><rect y="4" width="9" height="2" fill="#21468b"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><polygon points="270,230 285,110 315,110 330,230" fill="none" stroke="#e74c3c" stroke-width="5"/><line x1="200" y1="90" x2="400" y2="210" stroke="#3498db" stroke-width="4"/><line x1="400" y1="90" x2="200" y2="210" stroke="#3498db" stroke-width="4"/><circle cx="300" cy="150" r="12" fill="#f1c40f" stroke="#e74c3c" stroke-width="3"/></svg>`
   },
   "pl-PL": {
     name: "Polish",
     native: "Polski",
-    svg: `<svg class="flag-svg" viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="10" fill="#fff"/><rect y="5" width="16" height="5" fill="#dc143c"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="10" fill="#fff"/><rect y="5" width="16" height="5" fill="#dc143c"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="250" y="80" width="100" height="150" fill="none" stroke="#e74c3c" stroke-width="5"/><polygon points="250,80 300,30 350,80" fill="none" stroke="#e74c3c" stroke-width="4"/><circle cx="300" cy="110" r="15" fill="none" stroke="#e74c3c" stroke-width="3"/></svg>`
   },
   "ru-RU": {
     name: "Russian",
     native: "Русский",
-    svg: `<svg class="flag-svg" viewBox="0 0 9 6" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="6" fill="#fff"/><rect y="2" width="9" height="4" fill="#0039a6"/><rect y="4" width="9" height="2" fill="#d52b1e"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 9 6" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="6" fill="#fff"/><rect y="2" width="9" height="4" fill="#0039a6"/><rect y="4" width="9" height="2" fill="#d52b1e"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M260,140 Q300,60 340,140 Z" fill="none" stroke="#9b59b6" stroke-width="5"/><rect x="270" y="140" width="60" height="90" fill="none" stroke="#9b59b6" stroke-width="4"/><path d="M190,170 Q220,110 250,170 Z" fill="none" stroke="#f1c40f" stroke-width="4"/><rect x="200" y="170" width="40" height="60" fill="none" stroke="#f1c40f" stroke-width="3"/><path d="M350,170 Q380,110 410,170 Z" fill="none" stroke="#3498db" stroke-width="4"/><rect x="360" y="170" width="40" height="60" fill="none" stroke="#3498db" stroke-width="3"/></svg>`
   },
   "el-GR": {
     name: "Greek",
     native: "Ελληνικά",
-    svg: `<svg class="flag-svg" viewBox="0 0 27 18" xmlns="http://www.w3.org/2000/svg"><rect width="27" height="18" fill="#0d5eaf"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#0d5eaf"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 27 18" xmlns="http://www.w3.org/2000/svg"><rect width="27" height="18" fill="#0d5eaf"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#0d5eaf"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><polygon points="180,120 300,70 420,120" fill="none" stroke="#2980b9" stroke-width="5"/><line x1="180" y1="120" x2="420" y2="120" stroke="#2980b9" stroke-width="5"/><line x1="200" y1="120" x2="200" y2="220" stroke="#2980b9" stroke-width="4"/><line x1="240" y1="120" x2="240" y2="220" stroke="#2980b9" stroke-width="4"/><line x1="280" y1="120" x2="280" y2="220" stroke="#2980b9" stroke-width="4"/><line x1="320" y1="120" x2="320" y2="220" stroke="#2980b9" stroke-width="4"/><line x1="360" y1="120" x2="360" y2="220" stroke="#2980b9" stroke-width="4"/><line x1="400" y1="120" x2="400" y2="220" stroke="#2980b9" stroke-width="4"/><line x1="170" y1="220" x2="430" y2="220" stroke="#2980b9" stroke-width="6"/></svg>`
   },
   "sv-SE": {
     name: "Swedish",
     native: "Svenska",
-    svg: `<svg class="flag-svg" viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="10" fill="#006aa7"/><rect x="5" width="2" height="10" fill="#fecc00"/><rect y="4" width="16" height="2" fill="#fecc00"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="10" fill="#006aa7"/><rect x="5" width="2" height="10" fill="#fecc00"/><rect y="4" width="16" height="2" fill="#fecc00"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><polygon points="200,230 200,160 250,120 300,160 300,230" fill="none" stroke="#f39c12" stroke-width="4"/><polygon points="320,230 320,140 370,100 420,140 420,230" fill="none" stroke="#f39c12" stroke-width="4"/><path d="M100,230 Q300,190 500,230" fill="none" stroke="#2980b9" stroke-width="5"/></svg>`
   },
   "da-DK": {
     name: "Danish",
     native: "Dansk",
-    svg: `<svg class="flag-svg" viewBox="0 0 370 280" xmlns="http://www.w3.org/2000/svg"><rect width="370" height="280" fill="#c8102e"/><rect x="120" width="40" height="280" fill="#fff"/><rect y="120" width="370" height="40" fill="#fff"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 370 280" xmlns="http://www.w3.org/2000/svg"><rect width="370" height="280" fill="#c8102e"/><rect x="120" width="40" height="280" fill="#fff"/><rect y="120" width="370" height="40" fill="#fff"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="180" y="110" width="70" height="120" fill="none" stroke="#e74c3c" stroke-width="4"/><polygon points="180,110 215,70 250,110" fill="none" stroke="#e74c3c" stroke-width="4"/><rect x="270" y="130" width="60" height="100" fill="none" stroke="#f1c40f" stroke-width="4"/><polygon points="270,130 300,90 330,130" fill="none" stroke="#f1c40f" stroke-width="4"/><rect x="350" y="100" width="70" height="130" fill="none" stroke="#3498db" stroke-width="4"/><polygon points="350,100 385,60 420,100" fill="none" stroke="#3498db" stroke-width="4"/></svg>`
   },
   "fi-FI": {
     name: "Finnish",
     native: "Suomi",
-    svg: `<svg class="flag-svg" viewBox="0 0 1800 1100" xmlns="http://www.w3.org/2000/svg"><rect width="1800" height="1100" fill="#fff"/><rect x="500" width="300" height="1100" fill="#002f6c"/><rect y="400" width="1800" height="300" fill="#002f6c"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 1800 1100" xmlns="http://www.w3.org/2000/svg"><rect width="1800" height="1100" fill="#fff"/><rect x="500" width="300" height="1100" fill="#002f6c"/><rect y="400" width="1800" height="300" fill="#002f6c"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><polygon points="150,230 180,130 210,230" fill="none" stroke="#27ae60" stroke-width="4"/><polygon points="220,230 260,100 300,230" fill="none" stroke="#27ae60" stroke-width="4"/><polygon points="310,230 350,80 390,230" fill="none" stroke="#2980b9" stroke-width="5"/><circle cx="350" cy="65" r="12" fill="none" stroke="#2980b9" stroke-width="3"/></svg>`
   },
   "no-NO": {
     name: "Norwegian",
     native: "Norsk",
-    svg: `<svg class="flag-svg" viewBox="0 0 22 16" xmlns="http://www.w3.org/2000/svg"><rect width="22" height="16" fill="#ba0c2f"/><path d="M6 0v16M0 6h22" stroke="#fff" stroke-width="4"/><path d="M6 0v16M0 6h22" stroke="#00205b" stroke-width="2"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 22 16" xmlns="http://www.w3.org/2000/svg"><rect width="22" height="16" fill="#ba0c2f"/><path d="M6 0v16M0 6h22" stroke="#fff" stroke-width="4"/><path d="M6 0v16M0 6h22" stroke="#00205b" stroke-width="2"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M100,230 L220,100 L320,180 L440,70 L520,230 Z" fill="none" stroke="#2980b9" stroke-width="5" stroke-linejoin="round"/><path d="M220,100 L250,140 M440,70 L465,110" stroke="#ecf0f1" stroke-width="4"/></svg>`
   },
   "cs-CZ": {
     name: "Czech",
     native: "Čeština",
-    svg: `<svg class="flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="2" fill="#d7141a"/><rect width="3" height="1" fill="#fff"/><polygon points="0,0 1.5,1 0,2" fill="#11457e"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="2" fill="#d7141a"/><rect width="3" height="1" fill="#fff"/><polygon points="0,0 1.5,1 0,2" fill="#11457e"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M150,210 Q300,170 450,210" fill="none" stroke="#c0392b" stroke-width="6"/><rect x="200" y="120" width="30" height="70" fill="none" stroke="#c0392b" stroke-width="4"/><polygon points="200,120 215,80 230,120" fill="none" stroke="#c0392b" stroke-width="4"/><rect x="370" y="120" width="30" height="70" fill="none" stroke="#c0392b" stroke-width="4"/><polygon points="370,120 385,80 400,120" fill="none" stroke="#c0392b" stroke-width="4"/></svg>`
   },
   "uk-UA": {
     name: "Ukrainian",
     native: "Українська",
-    svg: `<svg class="flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="2" fill="#ffd700"/><rect width="3" height="1" fill="#0057b7"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="2" fill="#ffd700"/><rect width="3" height="1" fill="#0057b7"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M260,140 Q300,70 340,140 Z" fill="none" stroke="#f1c40f" stroke-width="5"/><rect x="270" y="140" width="60" height="90" fill="none" stroke="#2980b9" stroke-width="4"/><line x1="300" y1="40" x2="300" y2="70" stroke="#f1c40f" stroke-width="4"/></svg>`
   },
   "hu-HU": {
     name: "Hungarian",
     native: "Magyar",
-    svg: `<svg class="flag-svg" viewBox="0 0 6 3" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="3" fill="#436f4d"/><rect width="6" height="2" fill="#fff"/><rect width="6" height="1" fill="#cd2a3e"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 6 3" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="3" fill="#436f4d"/><rect width="6" height="2" fill="#fff"/><rect width="6" height="1" fill="#cd2a3e"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect x="180" y="130" width="240" height="90" fill="none" stroke="#c0392b" stroke-width="5"/><polygon points="270,130 300,70 330,130" fill="none" stroke="#c0392b" stroke-width="4"/><path d="M120,220 L480,220" stroke="#27ae60" stroke-width="5"/></svg>`
   },
   "tr-TR": {
     name: "Turkish",
     native: "Türkçe",
-    svg: `<svg class="flag-svg" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="800" fill="#e30a17"/><circle cx="425" cy="400" r="200" fill="#fff"/><circle cx="475" cy="400" r="160" fill="#e30a17"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="800" fill="#e30a17"/><circle cx="425" cy="400" r="200" fill="#fff"/><circle cx="475" cy="400" r="160" fill="#e30a17"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M220,180 C220,100 380,100 380,180 Z" fill="none" stroke="#e74c3c" stroke-width="5"/><line x1="180" y1="220" x2="180" y2="90" stroke="#e74c3c" stroke-width="4"/><polygon points="175,90 180,70 185,90" fill="#e74c3c"/><line x1="420" y1="220" x2="420" y2="90" stroke="#e74c3c" stroke-width="4"/><polygon points="415,90 420,70 425,90" fill="#e74c3c"/></svg>`
   },
   "ja-JP": {
     name: "Japanese",
     native: "日本語",
-    svg: `<svg class="flag-svg" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#fff"/><circle cx="450" cy="300" r="180" fill="#bc002d"/></svg>`
+    svg: `<svg class="flag-svg" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#fff"/><circle cx="450" cy="300" r="180" fill="#bc002d"/></svg>`,
+    landmarkSvg: `<svg class="landmark-bg-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><path d="M180,230 L300,100 L420,230 Z" fill="none" stroke="#e74c3c" stroke-width="5" stroke-linejoin="round"/><path d="M260,143 L340,143" stroke="#fff" stroke-width="5"/><line x1="150" y1="180" x2="230" y2="180" stroke="#e74c3c" stroke-width="6"/><line x1="160" y1="200" x2="220" y2="200" stroke="#e74c3c" stroke-width="4"/><line x1="175" y1="180" x2="175" y2="230" stroke="#e74c3c" stroke-width="5"/><line x1="205" y1="180" x2="205" y2="230" stroke="#e74c3c" stroke-width="5"/></svg>`
   }
 };
 
