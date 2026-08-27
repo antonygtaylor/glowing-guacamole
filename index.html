@@ -11,6 +11,10 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 
+  <!-- Preconnect hints for Google Fonts CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <!-- Google Material Symbols & Fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
 
@@ -72,7 +76,7 @@
   </header>
 
   <!-- Navigation Rail / Bottom Nav Bar -->
-  <nav class="navigation-bar" aria-label="Main Navigation">
+  <nav class="navigation-bar" aria-label="Main Navigation" role="tablist">
     <button class="nav-item active" id="nav-explore" data-tab="tab-explore" role="tab" aria-selected="true" aria-controls="tab-explore">
       <span class="material-symbols-outlined nav-item__icon" aria-hidden="true">explore</span>
       <span class="nav-item__label">Explore</span>
@@ -294,9 +298,9 @@
   <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <!-- JS Scripts -->
-  <script src="js/db.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/tts.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/db.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/tts.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>
