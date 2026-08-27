@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelPhrase - Offline Phrasebook</title>
+  <meta name="description" content="Offline travel phrasebook with audio pronunciation for seamless foreign travel.">
+  <meta name="theme-color" content="#6750A4">
+
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Google Material Symbols & Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Skip link for keyboard accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Top App Bar -->
+  <header class="top-app-bar">
+    <div class="top-app-bar__content">
+      <div class="top-app-bar__brand">
+        <span class="material-symbols-outlined logo-icon" aria-hidden="true">translate</span>
+        <h1 class="top-app-bar__title">TravelPhrase</h1>
+      </div>
+
+      <div class="top-app-bar__actions">
+        <!-- Language Selector -->
+        <div class="language-select-wrapper">
+          <label for="language-select" class="visually-hidden">Select Target Language</label>
+
+          <span class="material-symbols-outlined select-icon" aria-hidden="true">language</span>
+          <select id="language-select" class="language-select" aria-label="Select Target Language">
+            <option value="es-ES">Spanish (Español)</option>
+            <option value="fr-FR">French (Français)</option>
+            <option value="de-DE">German (Deutsch)</option>
+            <option value="it-IT">Italian (Italiano)</option>
+            <option value="ja-JP">Japanese (日本語)</option>
+          </select>
+        </div>
+
+        <!-- Network / Offline Badge -->
+        <div id="connection-status" class="status-chip online" role="status" aria-live="polite">
+          <span class="status-chip__dot"></span>
+          <span class="status-chip__text">Online</span>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+        <button id="theme-toggle" class="icon-button" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <span class="material-symbols-outlined" id="theme-icon" aria-hidden="true">dark_mode</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Rail / Bottom Nav Bar -->
+  <nav class="navigation-bar" aria-label="Main Navigation">
+    <button class="nav-item active" id="nav-explore" data-tab="tab-explore" role="tab" aria-selected="true" aria-controls="tab-explore">
+      <span class="material-symbols-outlined nav-item__icon" aria-hidden="true">explore</span>
+      <span class="nav-item__label">Explore</span>
+    </button>
+    <button class="nav-item" id="nav-saved" data-tab="tab-saved" role="tab" aria-selected="false" aria-controls="tab-saved">
+      <span class="material-symbols-outlined nav-item__icon" aria-hidden="true">bookmark</span>
+      <span class="nav-item__label">My Phrasebook</span>
+      <span id="saved-count-badge" class="badge">0</span>
+    </button>
+    <button class="nav-item" id="nav-practice" data-tab="tab-practice" role="tab" aria-selected="false" aria-controls="tab-practice">
+      <span class="material-symbols-outlined nav-item__icon" aria-hidden="true">style</span>
+      <span class="nav-item__label">Practice</span>
+    </button>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main id="main-content" class="main-content">
+
+    <!-- TAB 1: EXPLORE & DOWNLOAD -->
+    <section id="tab-explore" class="tab-panel active" role="tabpanel" aria-labelledby="nav-explore">
+
+      <!-- Search & Bulk Tools Bar -->
+      <div class="search-section">
+        <div class="search-bar">
+          <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
+          <input type="search" id="explore-search" class="search-input" placeholder="Search phrases in English or target language..." aria-label="Search phrases">
+          <button id="clear-search" class="icon-button clear-btn hidden" aria-label="Clear search text">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Category Filter Chips -->
+      <div class="topics-section">
+        <h2 class="section-title">Topics</h2>
+        <div id="topic-chips" class="chip-group" role="radiogroup" aria-label="Filter phrases by topic">
+          <!-- Chips generated dynamically -->
+        </div>
+      </div>
+
+      <!-- Action Banner -->
+      <div class="explore-header-actions">
+        <div class="explore-info">
+          <h2 id="current-topic-title" class="topic-heading">All Topics</h2>
+          <span id="topic-phrase-count" class="topic-count">0 phrases available</span>
+        </div>
+        <button id="download-topic-btn" class="button button--filled">
+          <span class="material-symbols-outlined" aria-hidden="true">download</span>
+          <span>Download Topic for Offline</span>
+        </button>
+      </div>
+
+      <!-- Phrase List -->
+      <div id="explore-phrase-list" class="phrase-grid" aria-live="polite">
+        <!-- Phrase cards injected dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 2: MY PHRASEBOOK (OFFLINE SAVED) -->
+    <section id="tab-saved" class="tab-panel" role="tabpanel" aria-labelledby="nav-saved" hidden>
+
+      <div class="saved-header">
+        <div class="saved-header__info">
+          <h2 class="section-title">Saved Offline Phrases</h2>
+          <p class="saved-subtitle">Phrases and audio cached on your device for offline travel.</p>
+        </div>
+        <button id="add-custom-phrase-btn" class="button button--filled">
+          <span class="material-symbols-outlined" aria-hidden="true">add</span>
+          <span>Add Custom Phrase</span>
+        </button>
+      </div>
+
+      <!-- Saved Search & Topic Filter -->
+      <div class="filter-row">
+        <div class="search-bar search-bar--sm">
+          <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
+          <input type="search" id="saved-search" class="search-input" placeholder="Search saved phrases..." aria-label="Search saved phrases">
+        </div>
+
+        <div class="select-wrapper">
+          <select id="saved-topic-filter" class="topic-select" aria-label="Filter saved phrases by topic">
+            <option value="all">All Saved Topics</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Saved Phrase List -->
+      <div id="saved-phrase-list" class="phrase-grid" aria-live="polite">
+        <!-- Saved cards injected dynamically -->
+      </div>
+
+      <!-- Empty state container -->
+      <div id="saved-empty-state" class="empty-state hidden">
+        <span class="material-symbols-outlined empty-icon" aria-hidden="true">bookmark_border</span>
+        <h3>No saved phrases yet</h3>
+        <p>Explore phrases and click "Save & Download" or add your own custom phrases for your trip!</p>
+        <button id="go-explore-btn" class="button button--outlined">Explore Phrases</button>
+      </div>
+    </section>
+
+    <!-- TAB 3: PRACTICE / FLASHCARDS -->
+    <section id="tab-practice" class="tab-panel" role="tabpanel" aria-labelledby="nav-practice" hidden>
+
+      <div class="practice-header">
+        <h2 class="section-title">Flashcard Practice</h2>
+        <div class="practice-controls">
+          <label for="practice-topic-select" class="visually-hidden">Select practice category</label>
+          <select id="practice-topic-select" class="topic-select" aria-label="Select practice topic">
+            <option value="all">All Saved Phrases</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="practice-container" class="practice-container">
+        <!-- Flashcard view -->
+        <div id="flashcard-wrapper" class="flashcard-wrapper">
+          <div id="flashcard" class="flashcard" role="region" aria-label="Flashcard" tabindex="0">
+            <div class="flashcard__inner">
+              <!-- Front Side -->
+              <div class="flashcard__front">
+                <span class="flashcard__category" id="card-topic">Ordering Food</span>
+                <p class="flashcard__text" id="card-english">Where is the restroom?</p>
+                <p class="flashcard__hint">Tap or press Space to reveal translation</p>
+              </div>
+              <!-- Back Side -->
+              <div class="flashcard__back">
+                <span class="flashcard__category" id="card-topic-back">Ordering Food</span>
+                <p class="flashcard__translation" id="card-target">¿Dónde está el baño?</p>
+                <p class="flashcard__phonetic" id="card-phonetic">Dohn-deh ehs-tah el bah-nyoh</p>
+                <button id="card-audio-btn" class="button button--icon-text" aria-label="Play audio">
+                  <span class="material-symbols-outlined" aria-hidden="true">volume_up</span>
+                  <span>Listen</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Practice Navigation Controls -->
+          <div class="flashcard-actions">
+            <button id="prev-card-btn" class="button button--outlined button--icon" aria-label="Previous card">
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+            </button>
+
+            <span id="card-progress" class="card-progress">Card 1 of 10</span>
+
+            <button id="flip-card-btn" class="button button--filled">
+              <span class="material-symbols-outlined" aria-hidden="true">flip</span>
+              <span>Flip Card</span>
+            </button>
+
+            <button id="next-card-btn" class="button button--outlined button--icon" aria-label="Next card">
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty practice state -->
+        <div id="practice-empty-state" class="empty-state hidden">
+          <span class="material-symbols-outlined empty-icon" aria-hidden="true">school</span>
+          <h3>No phrases available for practice</h3>
+          <p>Save at least one phrase to start practicing with flashcards.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ADD CUSTOM PHRASE MODAL -->
+  <div id="custom-phrase-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+    <div class="modal__overlay" id="modal-overlay"></div>
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <h2 id="modal-title" class="modal__title">Add Custom Phrase</h2>
+        <button id="close-modal-btn" class="icon-button" aria-label="Close modal">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <form id="custom-phrase-form" class="modal__form">
+        <div class="form-group">
+          <label for="custom-topic" class="form-label">Topic / Category</label>
+          <select id="custom-topic" class="form-input" required>
+            <option value="Greetings & Basics">Greetings & Basics</option>
+            <option value="Ordering Food">Ordering Food</option>
+            <option value="Arriving at Hotel">Arriving at Hotel</option>
+            <option value="At the Airport">At the Airport</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Shopping & Money">Shopping & Money</option>
+            <option value="Emergency & Help">Emergency & Help</option>
+
+            <option value="Medical & Health">Medical & Health</option>
+            <option value="Custom">Custom Topic</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="custom-english" class="form-label">English Phrase *</label>
+          <input type="text" id="custom-english" class="form-input" placeholder="e.g. Can I have the check?" required>
+        </div>
+
+        <div class="form-group">
+          <label for="custom-target" class="form-label">Translation *</label>
+          <input type="text" id="custom-target" class="form-input" placeholder="e.g. ¿Me trae la cuenta, por favor?" required>
+        </div>
+
+        <div class="form-group">
+          <label for="custom-phonetic" class="form-label">Pronunciation / Phonetic Guide (Optional)</label>
+          <input type="text" id="custom-phonetic" class="form-input" placeholder="e.g. Meh try-eh lah koo-en-tah">
+        </div>
+
+        <div class="modal__actions">
+          <button type="button" id="cancel-custom-btn" class="button button--text">Cancel</button>
+          <button type="submit" class="button button--filled">Save Phrase</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast / Snackbar Notifications -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- JS Scripts -->
+  <script src="js/db.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/tts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
