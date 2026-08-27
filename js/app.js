@@ -170,22 +170,19 @@ function setupEventListeners() {
   elements.cancelCustomBtn?.addEventListener('click', closeCustomModal);
   elements.customPhraseForm?.addEventListener('submit', handleCustomPhraseSubmit);
 
-  // Auto-Translation listener on English input
+  // Auto-Translation listener on English input via WebAssembly custom AI module
   const customEnglishEl = document.getElementById('custom-english');
   let translateDebounce;
   customEnglishEl?.addEventListener('input', (e) => {
     clearTimeout(translateDebounce);
     const val = e.target.value;
-    translateDebounce = setTimeout(() => {
+    translateDebounce = setTimeout(async () => {
+      if (!val) return;
       let autoTrans = '';
-      if (typeof translatePhrase === 'function' && val) {
+      if (typeof translatePhraseWasm === 'function') {
+        autoTrans = await translatePhraseWasm(val, state.currentLang);
+      } else if (typeof translatePhrase === 'function') {
         autoTrans = translatePhrase(val, state.currentLang);
-      } else if (typeof translateText === 'function' && val) {
-        translateText(val, state.currentLang).then(res => {
-          const targetInput = document.getElementById('custom-target');
-          if (res && targetInput && !targetInput.value) targetInput.value = res;
-        });
-        return;
       }
       const targetInput = document.getElementById('custom-target');
       if (autoTrans && targetInput && !targetInput.value) {
@@ -238,7 +235,7 @@ function setupEventListeners() {
 function updateHeaderLangButton() {
   const flags = typeof LANGUAGE_FLAGS !== 'undefined' ? LANGUAGE_FLAGS : {};
   const langMeta = flags[state.currentLang] || flags['es-ES'] || { svg: '', name: 'Spanish' };
-  if (elements.currentLangFlag) elements.currentLangFlag.innerHTML = langMeta.svg || '🇪🇸';
+  if (elements.currentLangFlag) elements.currentLangFlag.innerHTML = langMeta.svg || '';
   if (elements.currentLangName) elements.currentLangName.textContent = langMeta.name;
 }
 
@@ -272,7 +269,7 @@ function renderFlagGrid() {
     card.setAttribute('aria-label', `Select ${item.name}`);
 
     card.innerHTML = `
-      <span class="flag-card__emoji">${item.svg || '🇪🇸'}</span>
+      <span class="flag-card__emoji">${item.svg || ''}</span>
       <span class="flag-card__name">${item.name}</span>
       <span class="flag-card__native">${item.native}</span>
     `;

@@ -36,7 +36,7 @@
       <div class="top-app-bar__actions">
         <!-- Flag Language Picker Button -->
         <button id="open-lang-modal-btn" class="button button--outlined button--flag-picker" aria-label="Change destination language">
-          <span id="current-lang-flag" class="flag-emoji">🇪🇸</span>
+          <span id="current-lang-flag" class="flag-container"><svg class="flag-svg" viewBox="0 0 750 500" xmlns="http://www.w3.org/2000/svg"><rect width="750" height="500" fill="#c60b1e"/><rect y="125" width="750" height="250" fill="#ffc400"/></svg></span>
           <span id="current-lang-name" class="lang-text">Spanish</span>
           <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
         </button>
@@ -179,7 +179,7 @@
               <div class="flashcard__front">
                 <div class="flashcard__header-row">
                   <span class="flashcard__category" id="card-topic">Ordering Food</span>
-                  <span class="flashcard__flag-badge" id="card-flag-front">🇪🇸</span>
+                  <span class="flashcard__flag-badge" id="card-flag-front"><svg class="flag-svg flag-svg--lg" viewBox="0 0 750 500" xmlns="http://www.w3.org/2000/svg"><rect width="750" height="500" fill="#c60b1e"/><rect y="125" width="750" height="250" fill="#ffc400"/></svg></span>
                 </div>
                 <p class="flashcard__text" id="card-english">Where is the restroom?</p>
                 <p class="flashcard__hint">Tap or press Space to reveal translation</p>
@@ -188,7 +188,7 @@
               <div class="flashcard__back">
                 <div class="flashcard__header-row">
                   <span class="flashcard__category" id="card-topic-back">Ordering Food</span>
-                  <span class="flashcard__flag-badge" id="card-flag-back">🇪🇸</span>
+                  <span class="flashcard__flag-badge" id="card-flag-back"><svg class="flag-svg flag-svg--lg" viewBox="0 0 750 500" xmlns="http://www.w3.org/2000/svg"><rect width="750" height="500" fill="#c60b1e"/><rect y="125" width="750" height="250" fill="#ffc400"/></svg></span>
                 </div>
                 <p class="flashcard__translation" id="card-target">¿Dónde está el baño?</p>
                 <p class="flashcard__phonetic" id="card-phonetic">Dohn-deh ehs-tah el bah-nyoh</p>
@@ -307,6 +307,7 @@
   <script src="js/db.js" defer></script>
   <script src="js/api.js" defer></script>
   <script src="js/translator.js" defer></script>
+  <script src="js/wasm-translator.js" defer></script>
   <script src="js/tts.js" defer></script>
   <script src="js/app.js" defer></script>
 </body>
