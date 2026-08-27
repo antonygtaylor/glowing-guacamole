@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Load saved language setting from localStorage or show flag landing screen
   const savedLang = localStorage.getItem('travelphrase_lang');
-  if (savedLang && LANGUAGE_FLAGS[savedLang]) {
+  if (savedLang && LANGUAGE_FLAGS && LANGUAGE_FLAGS[savedLang]) {
     state.currentLang = savedLang;
   } else {
     openLangPickerModal(true); // First-time user onboarding screen
@@ -115,18 +115,18 @@ async function initDatabase() {
   }
 }
 
-/* Event Listeners */
+/* Event Listeners with Null Guards */
 function setupEventListeners() {
   // Flag Language Picker Modal Controls
-  elements.openLangModalBtn.addEventListener('click', () => openLangPickerModal(false));
-  elements.closeLangModalBtn.addEventListener('click', closeLangPickerModal);
-  elements.langModalOverlay.addEventListener('click', closeLangPickerModal);
+  elements.openLangModalBtn?.addEventListener('click', () => openLangPickerModal(false));
+  elements.closeLangModalBtn?.addEventListener('click', closeLangPickerModal);
+  elements.langModalOverlay?.addEventListener('click', closeLangPickerModal);
 
   // Dark Mode Toggle
-  elements.themeToggle.addEventListener('click', toggleTheme);
+  elements.themeToggle?.addEventListener('click', toggleTheme);
 
   // Tab Navigation
-  elements.navItems.forEach(button => {
+  elements.navItems?.forEach(button => {
     button.addEventListener('click', () => {
       const targetTab = button.getAttribute('data-tab');
       switchTab(targetTab);
@@ -134,67 +134,67 @@ function setupEventListeners() {
   });
 
   // Explore Search
-  elements.exploreSearch.addEventListener('input', (e) => {
+  elements.exploreSearch?.addEventListener('input', (e) => {
     state.searchQuery = e.target.value.trim().toLowerCase();
-    elements.clearSearch.classList.toggle('hidden', state.searchQuery === '');
+    elements.clearSearch?.classList.toggle('hidden', state.searchQuery === '');
     renderExploreList();
   });
 
-  elements.clearSearch.addEventListener('click', () => {
-    elements.exploreSearch.value = '';
+  elements.clearSearch?.addEventListener('click', () => {
+    if (elements.exploreSearch) elements.exploreSearch.value = '';
     state.searchQuery = '';
-    elements.clearSearch.classList.add('hidden');
+    elements.clearSearch?.classList.add('hidden');
     renderExploreList();
   });
 
   // Bulk Download Topic Button
-  elements.downloadTopicBtn.addEventListener('click', downloadCurrentTopicPhrases);
+  elements.downloadTopicBtn?.addEventListener('click', downloadCurrentTopicPhrases);
 
   // Saved Search & Filter
-  elements.savedSearch.addEventListener('input', (e) => {
+  elements.savedSearch?.addEventListener('input', (e) => {
     state.savedSearchQuery = e.target.value.trim().toLowerCase();
     renderSavedList();
   });
 
-  elements.savedTopicFilter.addEventListener('change', (e) => {
+  elements.savedTopicFilter?.addEventListener('change', (e) => {
     state.savedTopicFilter = e.target.value;
     renderSavedList();
   });
 
-  elements.goExploreBtn.addEventListener('click', () => switchTab('tab-explore'));
+  elements.goExploreBtn?.addEventListener('click', () => switchTab('tab-explore'));
 
   // Custom Phrase Modal Controls
-  elements.addCustomPhraseBtn.addEventListener('click', openCustomModal);
-  elements.closeModalBtn.addEventListener('click', closeCustomModal);
-  elements.modalOverlay.addEventListener('click', closeCustomModal);
-  elements.cancelCustomBtn.addEventListener('click', closeCustomModal);
-  elements.customPhraseForm.addEventListener('submit', handleCustomPhraseSubmit);
+  elements.addCustomPhraseBtn?.addEventListener('click', openCustomModal);
+  elements.closeModalBtn?.addEventListener('click', closeCustomModal);
+  elements.modalOverlay?.addEventListener('click', closeCustomModal);
+  elements.cancelCustomBtn?.addEventListener('click', closeCustomModal);
+  elements.customPhraseForm?.addEventListener('submit', handleCustomPhraseSubmit);
 
   // Practice Mode Controls
-  elements.practiceTopicSelect.addEventListener('change', (e) => {
+  elements.practiceTopicSelect?.addEventListener('change', (e) => {
     setupPracticeMode(e.target.value);
   });
 
-  elements.flashcard.addEventListener('click', flipFlashcard);
-  elements.flipCardBtn.addEventListener('click', (e) => {
+  elements.flashcard?.addEventListener('click', flipFlashcard);
+  elements.flipCardBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     flipFlashcard();
   });
 
-  elements.flashcard.addEventListener('keydown', (e) => {
+  elements.flashcard?.addEventListener('keydown', (e) => {
     if (e.code === 'Space' || e.code === 'Enter') {
       e.preventDefault();
       flipFlashcard();
     }
   });
 
-  elements.cardAudioBtn.addEventListener('click', (e) => {
+  elements.cardAudioBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     const phrase = state.practicePhrases[state.practiceIndex];
     if (phrase) playPhraseAudio(phrase);
   });
 
-  elements.prevCardBtn.addEventListener('click', (e) => {
+  elements.prevCardBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     if (state.practicePhrases.length === 0) return;
     state.practiceIndex = (state.practiceIndex - 1 + state.practicePhrases.length) % state.practicePhrases.length;
@@ -202,7 +202,7 @@ function setupEventListeners() {
     renderFlashcard();
   });
 
-  elements.nextCardBtn.addEventListener('click', (e) => {
+  elements.nextCardBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
     if (state.practicePhrases.length === 0) return;
     state.practiceIndex = (state.practiceIndex + 1) % state.practicePhrases.length;
@@ -212,30 +212,34 @@ function setupEventListeners() {
 }
 
 function updateHeaderLangButton() {
-  const langMeta = LANGUAGE_FLAGS[state.currentLang] || LANGUAGE_FLAGS['es-ES'];
-  elements.currentLangFlag.textContent = langMeta.flag;
-  elements.currentLangName.textContent = langMeta.name;
+  const flags = typeof LANGUAGE_FLAGS !== 'undefined' ? LANGUAGE_FLAGS : {};
+  const langMeta = flags[state.currentLang] || flags['es-ES'] || { flag: '🇪🇸', name: 'Spanish' };
+  if (elements.currentLangFlag) elements.currentLangFlag.textContent = langMeta.flag;
+  if (elements.currentLangName) elements.currentLangName.textContent = langMeta.name;
 }
 
 /* Flag Picker Landing Modal */
 function openLangPickerModal(isFirstLaunch = false) {
   renderFlagGrid();
   if (isFirstLaunch) {
-    elements.closeLangModalBtn.classList.add('hidden');
+    elements.closeLangModalBtn?.classList.add('hidden');
   } else {
-    elements.closeLangModalBtn.classList.remove('hidden');
+    elements.closeLangModalBtn?.classList.remove('hidden');
   }
-  elements.langPickerModal.removeAttribute('aria-hidden');
+  elements.langPickerModal?.removeAttribute('aria-hidden');
 }
 
 function closeLangPickerModal() {
-  elements.langPickerModal.setAttribute('aria-hidden', 'true');
+  elements.langPickerModal?.setAttribute('aria-hidden', 'true');
 }
 
 function renderFlagGrid() {
+  if (!elements.flagGrid) return;
   elements.flagGrid.innerHTML = '';
-  Object.keys(LANGUAGE_FLAGS).forEach(code => {
-    const item = LANGUAGE_FLAGS[code];
+  const flags = typeof LANGUAGE_FLAGS !== 'undefined' ? LANGUAGE_FLAGS : {};
+
+  Object.keys(flags).forEach(code => {
+    const item = flags[code];
     const isSelected = code === state.currentLang;
 
     const card = document.createElement('button');
@@ -271,13 +275,13 @@ function selectDestinationLanguage(code) {
 }
 
 function switchTab(tabId) {
-  elements.navItems.forEach(item => {
+  elements.navItems?.forEach(item => {
     const isTarget = item.getAttribute('data-tab') === tabId;
     item.classList.toggle('active', isTarget);
     item.setAttribute('aria-selected', isTarget ? 'true' : 'false');
   });
 
-  elements.tabPanels.forEach(panel => {
+  elements.tabPanels?.forEach(panel => {
     const isTarget = panel.id === tabId;
     panel.classList.toggle('active', isTarget);
     panel.hidden = !isTarget;
@@ -294,19 +298,21 @@ function toggleTheme() {
   const isDark = document.body.getAttribute('data-theme') === 'dark';
   if (isDark) {
     document.body.removeAttribute('data-theme');
-    elements.themeIcon.textContent = 'dark_mode';
+    if (elements.themeIcon) elements.themeIcon.textContent = 'dark_mode';
   } else {
     document.body.setAttribute('data-theme', 'dark');
-    elements.themeIcon.textContent = 'light_mode';
+    if (elements.themeIcon) elements.themeIcon.textContent = 'light_mode';
   }
 }
 
 /* Online / Offline status */
 function setupOnlineOfflineStatus() {
   function updateStatus() {
+    if (!elements.connectionStatus) return;
     const online = navigator.onLine;
     elements.connectionStatus.className = `status-chip ${online ? 'online' : 'offline'}`;
-    elements.connectionStatus.querySelector('.status-chip__text').textContent = online ? 'Online' : 'Offline';
+    const textEl = elements.connectionStatus.querySelector('.status-chip__text');
+    if (textEl) textEl.textContent = online ? 'Online' : 'Offline';
   }
   window.addEventListener('online', updateStatus);
   window.addEventListener('offline', updateStatus);
@@ -330,7 +336,7 @@ function registerServiceWorker() {
 async function refreshSavedPhrases() {
   try {
     state.savedPhrases = await getAllSavedPhrases(state.currentLang);
-    elements.savedCountBadge.textContent = state.savedPhrases.length;
+    if (elements.savedCountBadge) elements.savedCountBadge.textContent = state.savedPhrases.length;
     updateSavedTopicFilterOptions();
   } catch (e) {
     console.error('Error fetching saved phrases:', e);
@@ -339,21 +345,22 @@ async function refreshSavedPhrases() {
 
 function updateSavedTopicFilterOptions() {
   const topics = new Set(state.savedPhrases.map(p => p.topic));
-  elements.savedTopicFilter.innerHTML = '<option value="all">All Saved Topics</option>';
-  elements.practiceTopicSelect.innerHTML = '<option value="all">All Saved Phrases</option>';
+  if (elements.savedTopicFilter) elements.savedTopicFilter.innerHTML = '<option value="all">All Saved Topics</option>';
+  if (elements.practiceTopicSelect) elements.practiceTopicSelect.innerHTML = '<option value="all">All Saved Phrases</option>';
 
   topics.forEach(t => {
     const opt = document.createElement('option');
     opt.value = t;
     opt.textContent = t;
-    elements.savedTopicFilter.appendChild(opt.cloneNode(true));
-    elements.practiceTopicSelect.appendChild(opt);
+    elements.savedTopicFilter?.appendChild(opt.cloneNode(true));
+    elements.practiceTopicSelect?.appendChild(opt);
   });
 }
 
 /* EXPLORE TAB LOGIC */
 function renderTopicChips() {
-  const topics = getTopicList();
+  if (!elements.topicChipsContainer) return;
+  const topics = typeof getTopicList === 'function' ? getTopicList() : ['All'];
   elements.topicChipsContainer.innerHTML = '';
 
   topics.forEach(topic => {
@@ -374,9 +381,9 @@ function renderTopicChips() {
 }
 
 async function renderExploreList() {
-  elements.currentTopicTitle.textContent = state.currentTopic === 'All' ? 'All Topics' : state.currentTopic;
+  if (elements.currentTopicTitle) elements.currentTopicTitle.textContent = state.currentTopic === 'All' ? 'All Topics' : state.currentTopic;
 
-  let phrases = getPhrasesByTopic(state.currentTopic, state.currentLang);
+  let phrases = typeof getPhrasesByTopic === 'function' ? getPhrasesByTopic(state.currentTopic, state.currentLang) : [];
 
   if (state.searchQuery) {
     phrases = phrases.filter(p =>
@@ -385,7 +392,8 @@ async function renderExploreList() {
     );
   }
 
-  elements.topicPhraseCount.textContent = `${phrases.length} phrase${phrases.length === 1 ? '' : 's'} available`;
+  if (elements.topicPhraseCount) elements.topicPhraseCount.textContent = `${phrases.length} phrase${phrases.length === 1 ? '' : 's'} available`;
+  if (!elements.explorePhraseList) return;
   elements.explorePhraseList.innerHTML = '';
 
   if (phrases.length === 0) {
@@ -408,9 +416,11 @@ async function renderExploreList() {
 
 /* Bulk Download Topic */
 async function downloadCurrentTopicPhrases() {
-  const phrases = getPhrasesByTopic(state.currentTopic, state.currentLang);
-  elements.downloadTopicBtn.disabled = true;
-  elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined spin">sync</span> Saving...';
+  const phrases = typeof getPhrasesByTopic === 'function' ? getPhrasesByTopic(state.currentTopic, state.currentLang) : [];
+  if (elements.downloadTopicBtn) {
+    elements.downloadTopicBtn.disabled = true;
+    elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined spin">sync</span> Saving...';
+  }
 
   let count = 0;
   for (const p of phrases) {
@@ -421,8 +431,10 @@ async function downloadCurrentTopicPhrases() {
   await refreshSavedPhrases();
   renderExploreList();
 
-  elements.downloadTopicBtn.disabled = false;
-  elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined">download</span> Download Topic for Offline';
+  if (elements.downloadTopicBtn) {
+    elements.downloadTopicBtn.disabled = false;
+    elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined">download</span> Download Topic for Offline';
+  }
   showToast(`Saved ${count} phrases for offline use!`);
 }
 
@@ -442,15 +454,16 @@ async function renderSavedList() {
     );
   }
 
+  if (!elements.savedPhraseList) return;
   elements.savedPhraseList.innerHTML = '';
 
   if (phrases.length === 0) {
     elements.savedPhraseList.classList.add('hidden');
-    elements.savedEmptyState.classList.remove('hidden');
+    elements.savedEmptyState?.classList.remove('hidden');
     return;
   }
 
-  elements.savedEmptyState.classList.add('hidden');
+  elements.savedEmptyState?.classList.add('hidden');
   elements.savedPhraseList.classList.remove('hidden');
 
   phrases.forEach(phrase => {
@@ -464,7 +477,8 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
   const card = document.createElement('div');
   card.className = 'phrase-card';
 
-  const langMeta = LANGUAGE_FLAGS[phrase.lang || state.currentLang] || LANGUAGE_FLAGS['es-ES'];
+  const flags = typeof LANGUAGE_FLAGS !== 'undefined' ? LANGUAGE_FLAGS : {};
+  const langMeta = flags[phrase.lang || state.currentLang] || flags['es-ES'] || { flag: '🇪🇸', name: 'Spanish' };
 
   card.innerHTML = `
     <div class="phrase-card__header">
@@ -491,11 +505,11 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
 
   // Audio Event
   const playBtn = card.querySelector('.play-audio-btn');
-  playBtn.addEventListener('click', () => playPhraseAudio(phrase));
+  playBtn?.addEventListener('click', () => playPhraseAudio(phrase));
 
   // Save/Remove Event
   const saveBtn = card.querySelector('.save-toggle-btn');
-  saveBtn.addEventListener('click', async () => {
+  saveBtn?.addEventListener('click', async () => {
     if (isSaved) {
       await removePhrase(phrase.id, state.currentLang);
       showToast('Removed from phrasebook');
@@ -518,7 +532,9 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
 /* Audio Playback Handling */
 async function playPhraseAudio(phrase) {
   const targetLang = phrase.lang || state.currentLang;
-  speakText(phrase.target, targetLang);
+  if (typeof speakText === 'function') {
+    speakText(phrase.target, targetLang);
+  }
 }
 
 /* PRACTICE TAB LOGIC */
@@ -533,11 +549,11 @@ function setupPracticeMode(topicFilter = 'all') {
   state.isFlipped = false;
 
   if (state.practicePhrases.length === 0) {
-    elements.flashcardWrapper.classList.add('hidden');
-    elements.practiceEmptyState.classList.remove('hidden');
+    elements.flashcardWrapper?.classList.add('hidden');
+    elements.practiceEmptyState?.classList.remove('hidden');
   } else {
-    elements.practiceEmptyState.classList.add('hidden');
-    elements.flashcardWrapper.classList.remove('hidden');
+    elements.practiceEmptyState?.classList.add('hidden');
+    elements.flashcardWrapper?.classList.remove('hidden');
     renderFlashcard();
   }
 }
@@ -546,42 +562,49 @@ function renderFlashcard() {
   const phrase = state.practicePhrases[state.practiceIndex];
   if (!phrase) return;
 
-  const langMeta = LANGUAGE_FLAGS[phrase.lang || state.currentLang] || LANGUAGE_FLAGS['es-ES'];
+  const flags = typeof LANGUAGE_FLAGS !== 'undefined' ? LANGUAGE_FLAGS : {};
+  const langMeta = flags[phrase.lang || state.currentLang] || flags['es-ES'] || { flag: '🇪🇸', name: 'Spanish' };
 
-  elements.cardTopic.textContent = phrase.topic;
-  elements.cardTopicBack.textContent = phrase.topic;
-  elements.cardFlagFront.textContent = langMeta.flag;
-  elements.cardFlagBack.textContent = langMeta.flag;
-  elements.cardEnglish.textContent = phrase.english;
-  elements.cardTarget.textContent = phrase.target;
-  elements.cardPhonetic.textContent = phrase.phonetic || '';
+  if (elements.cardTopic) elements.cardTopic.textContent = phrase.topic;
+  if (elements.cardTopicBack) elements.cardTopicBack.textContent = phrase.topic;
+  if (elements.cardFlagFront) elements.cardFlagFront.textContent = langMeta.flag;
+  if (elements.cardFlagBack) elements.cardFlagBack.textContent = langMeta.flag;
+  if (elements.cardEnglish) elements.cardEnglish.textContent = phrase.english;
+  if (elements.cardTarget) elements.cardTarget.textContent = phrase.target;
+  if (elements.cardPhonetic) elements.cardPhonetic.textContent = phrase.phonetic || '';
 
-  elements.cardProgress.textContent = `Card ${state.practiceIndex + 1} of ${state.practicePhrases.length}`;
-  elements.flashcard.classList.toggle('flipped', state.isFlipped);
+  if (elements.cardProgress) elements.cardProgress.textContent = `Card ${state.practiceIndex + 1} of ${state.practicePhrases.length}`;
+  elements.flashcard?.classList.toggle('flipped', state.isFlipped);
 }
 
 function flipFlashcard() {
   state.isFlipped = !state.isFlipped;
-  elements.flashcard.classList.toggle('flipped', state.isFlipped);
+  elements.flashcard?.classList.toggle('flipped', state.isFlipped);
 }
 
 /* CUSTOM PHRASE MODAL LOGIC */
 function openCustomModal() {
-  elements.customPhraseModal.removeAttribute('aria-hidden');
-  document.getElementById('custom-english').focus();
+  elements.customPhraseModal?.removeAttribute('aria-hidden');
+  const customEngEl = document.getElementById('custom-english');
+  if (customEngEl) customEngEl.focus();
 }
 
 function closeCustomModal() {
-  elements.customPhraseModal.setAttribute('aria-hidden', 'true');
-  elements.customPhraseForm.reset();
+  elements.customPhraseModal?.setAttribute('aria-hidden', 'true');
+  elements.customPhraseForm?.reset();
 }
 
 async function handleCustomPhraseSubmit(e) {
   e.preventDefault();
-  const topic = document.getElementById('custom-topic').value;
-  const english = document.getElementById('custom-english').value.trim();
-  const target = document.getElementById('custom-target').value.trim();
-  const phonetic = document.getElementById('custom-phonetic').value.trim();
+  const topicEl = document.getElementById('custom-topic');
+  const engEl = document.getElementById('custom-english');
+  const targetEl = document.getElementById('custom-target');
+  const phoneticEl = document.getElementById('custom-phonetic');
+
+  const topic = topicEl ? topicEl.value : 'Custom';
+  const english = engEl ? engEl.value.trim() : '';
+  const target = targetEl ? targetEl.value.trim() : '';
+  const phonetic = phoneticEl ? phoneticEl.value.trim() : '';
 
   if (!english || !target) return;
 
@@ -597,11 +620,12 @@ async function handleCustomPhraseSubmit(e) {
 /* Toast Notifications */
 let toastTimeout;
 function showToast(message) {
+  if (!elements.toast) return;
   elements.toast.textContent = message;
   elements.toast.classList.add('show');
 
   clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => {
-    elements.toast.classList.remove('show');
+    elements.toast?.classList.remove('show');
   }, 3000);
 }
