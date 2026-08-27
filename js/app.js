@@ -242,12 +242,15 @@ function setupOnlineOfflineStatus() {
 
 /* Service Worker Registration */
 function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
+  // Check if running under HTTP/HTTPS protocol before registering ServiceWorker
+  if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(err => {
+      navigator.serviceWorker.register('./sw.js').catch(err => {
         console.warn('ServiceWorker registration failed: ', err);
       });
     });
+  } else if (window.location.protocol === 'file:') {
+    console.info('Running via file:// protocol. PWA Service Workers require an HTTP/HTTPS web server.');
   }
 }
 

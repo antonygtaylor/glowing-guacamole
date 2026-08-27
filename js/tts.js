@@ -2,6 +2,25 @@
  * Text-to-Speech (TTS) and Offline Audio Generation Module
  */
 
+let globalAudioCtx = null;
+
+function getAudioContext() {
+  if (!globalAudioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      globalAudioCtx = new AudioContextClass();
+    }
+  }
+  if (globalAudioCtx && globalAudioCtx.state === 'suspended') {
+    globalAudioCtx.resume();
+  }
+  return globalAudioCtx;
+}
+
+// Unlock audio context on user interaction (necessary for mobile browsers / iOS Safari)
+document.addEventListener('click', () => { getAudioContext(); }, { once: false });
+document.addEventListener('touchstart', () => { getAudioContext(); }, { once: false });
+
 /**
  * Speaks text using Web Speech Synthesis API.
  * Falls back gracefully or plays cached audio Blob if available.
@@ -71,26 +90,54 @@ async function generateAndCacheAudioBlob(id, text, langCode) {
 }
 
 /**
- * Plays cached audio Blob
+ * Plays cached audio Blob using Web Audio API or HTMLAudioElement fallback
  */
 function playAudioBlob(blob) {
   return new Promise((resolve, reject) => {
     try {
-      const audioUrl = URL.createObjectURL(blob);
-      const audio = new Audio(audioUrl);
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        resolve(true);
-      };
-      audio.onerror = (e) => {
-        URL.revokeObjectURL(audioUrl);
-        reject(e);
-      };
-      audio.play().catch(reject);
+      const ctx = getAudioContext();
+      if (ctx) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          const arrayBuffer = reader.result;
+          ctx.decodeAudioData(arrayBuffer, (audioBuffer) => {
+            const source = ctx.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(ctx.destination);
+            source.onended = () => resolve(true);
+            source.start(0);
+          }, (err) => {
+            console.warn('AudioContext decode failed, trying HTMLAudio element:', err);
+            fallbackPlayHTMLAudio(blob, resolve, reject);
+          });
+        };
+        reader.onerror = (e) => fallbackPlayHTMLAudio(blob, resolve, reject);
+        reader.readAsArrayBuffer(blob);
+      } else {
+        fallbackPlayHTMLAudio(blob, resolve, reject);
+      }
     } catch (e) {
-      reject(e);
+      fallbackPlayHTMLAudio(blob, resolve, reject);
     }
   });
+}
+
+function fallbackPlayHTMLAudio(blob, resolve, reject) {
+  try {
+    const audioUrl = URL.createObjectURL(blob);
+    const audio = new Audio(audioUrl);
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      resolve(true);
+    };
+    audio.onerror = (e) => {
+      URL.revokeObjectURL(audioUrl);
+      reject(e);
+    };
+    audio.play().catch(reject);
+  } catch (e) {
+    reject(e);
+  }
 }
 
 /**
