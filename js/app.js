@@ -176,15 +176,22 @@ function setupEventListeners() {
   customEnglishEl?.addEventListener('input', (e) => {
     clearTimeout(translateDebounce);
     const val = e.target.value;
-    translateDebounce = setTimeout(async () => {
-      if (typeof translateText === 'function' && val) {
-        const autoTrans = await translateText(val, state.currentLang);
-        const targetInput = document.getElementById('custom-target');
-        if (autoTrans && targetInput && !targetInput.value) {
-          targetInput.value = autoTrans;
-        }
+    translateDebounce = setTimeout(() => {
+      let autoTrans = '';
+      if (typeof translatePhrase === 'function' && val) {
+        autoTrans = translatePhrase(val, state.currentLang);
+      } else if (typeof translateText === 'function' && val) {
+        translateText(val, state.currentLang).then(res => {
+          const targetInput = document.getElementById('custom-target');
+          if (res && targetInput && !targetInput.value) targetInput.value = res;
+        });
+        return;
       }
-    }, 400);
+      const targetInput = document.getElementById('custom-target');
+      if (autoTrans && targetInput && !targetInput.value) {
+        targetInput.value = autoTrans;
+      }
+    }, 300);
   });
 
   // Practice Mode Controls
@@ -230,8 +237,8 @@ function setupEventListeners() {
 
 function updateHeaderLangButton() {
   const flags = typeof LANGUAGE_FLAGS !== 'undefined' ? LANGUAGE_FLAGS : {};
-  const langMeta = flags[state.currentLang] || flags['es-ES'] || { flag: '🇪🇸', name: 'Spanish' };
-  if (elements.currentLangFlag) elements.currentLangFlag.textContent = langMeta.flag;
+  const langMeta = flags[state.currentLang] || flags['es-ES'] || { svg: '', name: 'Spanish' };
+  if (elements.currentLangFlag) elements.currentLangFlag.innerHTML = langMeta.svg || '🇪🇸';
   if (elements.currentLangName) elements.currentLangName.textContent = langMeta.name;
 }
 
@@ -265,7 +272,7 @@ function renderFlagGrid() {
     card.setAttribute('aria-label', `Select ${item.name}`);
 
     card.innerHTML = `
-      <span class="flag-card__emoji">${item.flag}</span>
+      <span class="flag-card__emoji">${item.svg || '🇪🇸'}</span>
       <span class="flag-card__name">${item.name}</span>
       <span class="flag-card__native">${item.native}</span>
     `;
@@ -500,7 +507,7 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
   card.innerHTML = `
     <div class="phrase-card__header">
       <span class="phrase-card__category">${phrase.topic}</span>
-      <span class="lang-badge">${langMeta.flag} ${langMeta.name}</span>
+      <span class="lang-badge">${langMeta.svg || ''} ${langMeta.name}</span>
     </div>
     <div class="phrase-card__body">
       <p class="phrase-card__english">${phrase.english}</p>
@@ -584,8 +591,8 @@ function renderFlashcard() {
 
   if (elements.cardTopic) elements.cardTopic.textContent = phrase.topic;
   if (elements.cardTopicBack) elements.cardTopicBack.textContent = phrase.topic;
-  if (elements.cardFlagFront) elements.cardFlagFront.textContent = langMeta.flag;
-  if (elements.cardFlagBack) elements.cardFlagBack.textContent = langMeta.flag;
+  if (elements.cardFlagFront) elements.cardFlagFront.innerHTML = langMeta.svg || '';
+  if (elements.cardFlagBack) elements.cardFlagBack.innerHTML = langMeta.svg || '';
   if (elements.cardEnglish) elements.cardEnglish.textContent = phrase.english;
   if (elements.cardTarget) elements.cardTarget.textContent = phrase.target;
   if (elements.cardPhonetic) elements.cardPhonetic.textContent = phrase.phonetic || '';

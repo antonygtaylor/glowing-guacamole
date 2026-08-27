@@ -174,7 +174,7 @@ body {
   gap: 12px;
 }
 
-/* Flag Language Picker Button */
+/* Flag Language Picker Button & SVG Icons */
 .button--flag-picker {
   padding: 6px 14px;
   border-radius: 20px;
@@ -183,21 +183,31 @@ body {
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background-color: var(--md-sys-color-surface-container-highest);
   border-color: var(--md-sys-color-outline-variant);
-
 }
 
-.flag-emoji {
-  font-size: 1.2rem;
-  line-height: 1;
+.flag-svg {
+  width: 22px;
+  height: 15px;
+  border-radius: 3px;
+  object-fit: cover;
+  display: inline-block;
+  vertical-align: middle;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.flag-svg--lg {
+  width: 36px;
+  height: 24px;
+  border-radius: 4px;
 }
 
 .lang-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 0.85rem;
   font-weight: 600;
   padding: 2px 8px;
@@ -712,7 +722,8 @@ body {
 }
 
 .flashcard__flag-badge {
-  font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
 }
 
 .flashcard__front {
@@ -883,11 +894,6 @@ body {
   border-color: var(--md-sys-color-primary);
   background-color: var(--md-sys-color-primary-container);
   box-shadow: var(--md-elevation-2);
-}
-
-.flag-card__emoji {
-  font-size: 2.2rem;
-  line-height: 1;
 }
 
 .flag-card__name {
