@@ -170,7 +170,7 @@ function setupEventListeners() {
   elements.cancelCustomBtn?.addEventListener('click', closeCustomModal);
   elements.customPhraseForm?.addEventListener('submit', handleCustomPhraseSubmit);
 
-  // Auto-Translation listener on English input via WebAssembly custom AI module
+  // Auto-Translation listener on English input via MarianMT (Quantized ONNX WASM) AI module
   const customEnglishEl = document.getElementById('custom-english');
   let translateDebounce;
   customEnglishEl?.addEventListener('input', (e) => {
@@ -179,7 +179,9 @@ function setupEventListeners() {
     translateDebounce = setTimeout(async () => {
       if (!val) return;
       let autoTrans = '';
-      if (typeof translatePhraseWasm === 'function') {
+      if (typeof translatePhraseMarianMTWasm === 'function') {
+        autoTrans = await translatePhraseMarianMTWasm(val, state.currentLang);
+      } else if (typeof translatePhraseWasm === 'function') {
         autoTrans = await translatePhraseWasm(val, state.currentLang);
       } else if (typeof translatePhrase === 'function') {
         autoTrans = translatePhrase(val, state.currentLang);
