@@ -365,6 +365,53 @@ function getPhrasesByTopic(topicName, langCode) {
 }
 
 /**
+ * On-Device Translation Method
+ * Uses Chrome on-device AI Translator API (window.translation / window.ai.translator)
+ * or built-in offline dictionary fallback for custom phrase translations.
+ */
+async function translateText(text, targetLangCode) {
+  if (!text || !text.trim()) return '';
+
+  const cleanText = text.trim().toLowerCase();
+  const shortLang = targetLangCode ? targetLangCode.split('-')[0] : 'es';
+
+  // 1. Try Chrome On-Device AI Translator API if available
+  try {
+    if (window.translation && typeof window.translation.createTranslator === 'function') {
+      const translator = await window.translation.createTranslator({
+        sourceLanguage: 'en',
+        targetLanguage: shortLang
+      });
+      const result = await translator.translate(text);
+      if (result) return result;
+    } else if (window.ai && window.ai.translator && typeof window.ai.translator.create === 'function') {
+      const translator = await window.ai.translator.create({
+        sourceLanguage: 'en',
+        targetLanguage: shortLang
+      });
+      const result = await translator.translate(text);
+      if (result) return result;
+    }
+  } catch (err) {
+    console.info('On-device AI translator unavailable, using dictionary matching:', err);
+  }
+
+  // 2. Offline Dictionary Exact & Partial Match Fallback
+  for (const topic of Object.keys(PHRASE_CATALOG)) {
+    for (const item of PHRASE_CATALOG[topic]) {
+      if (item.english.toLowerCase() === cleanText || cleanText.includes(item.english.toLowerCase())) {
+        const trans = item.translations[targetLangCode] || item.translations['es-ES'];
+        if (trans && trans.target) {
+          return trans.target;
+        }
+      }
+    }
+  }
+
+  return '';
+}
+
+/**
  * Retrieves all available topic names
  */
 function getTopicList() {
