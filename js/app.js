@@ -170,27 +170,44 @@ function setupEventListeners() {
   elements.cancelCustomBtn?.addEventListener('click', closeCustomModal);
   elements.customPhraseForm?.addEventListener('submit', handleCustomPhraseSubmit);
 
-  // Auto-Translation listener on English input via MarianMT (Quantized ONNX WASM) AI module
-  const customEnglishEl = document.getElementById('custom-english');
-  let translateDebounce;
-  customEnglishEl?.addEventListener('input', (e) => {
-    clearTimeout(translateDebounce);
-    const val = e.target.value;
-    translateDebounce = setTimeout(async () => {
-      if (!val) return;
+  // Manual Translate button trigger for Custom Phrase modal
+  const translateBtn = document.getElementById('trigger-translate-btn');
+  translateBtn?.addEventListener('click', async () => {
+    const englishInput = document.getElementById('custom-english');
+    const targetInput = document.getElementById('custom-target');
+    const englishVal = englishInput ? englishInput.value.trim() : '';
+
+    if (!englishVal) {
+      showToast('Please enter an English phrase first');
+      englishInput?.focus();
+      return;
+    }
+
+    const origBtnContent = translateBtn.innerHTML;
+    translateBtn.disabled = true;
+    translateBtn.innerHTML = `<span class="material-symbols-outlined spin" style="font-size: 16px;">sync</span> Translating...`;
+
+    try {
       let autoTrans = '';
       if (typeof translatePhraseMarianMTWasm === 'function') {
-        autoTrans = await translatePhraseMarianMTWasm(val, state.currentLang);
-      } else if (typeof translatePhraseWasm === 'function') {
-        autoTrans = await translatePhraseWasm(val, state.currentLang);
+        autoTrans = await translatePhraseMarianMTWasm(englishVal, state.currentLang);
       } else if (typeof translatePhrase === 'function') {
-        autoTrans = translatePhrase(val, state.currentLang);
+        autoTrans = translatePhrase(englishVal, state.currentLang);
       }
-      const targetInput = document.getElementById('custom-target');
-      if (autoTrans && targetInput && !targetInput.value) {
+
+      if (autoTrans && targetInput) {
         targetInput.value = autoTrans;
+        showToast('Translation generated');
+      } else {
+        showToast('Translation completed');
       }
-    }, 300);
+    } catch (err) {
+      console.error('Translation error:', err);
+      showToast('Error generating translation');
+    } finally {
+      translateBtn.disabled = false;
+      translateBtn.innerHTML = origBtnContent;
+    }
   });
 
   // Practice Mode Controls
