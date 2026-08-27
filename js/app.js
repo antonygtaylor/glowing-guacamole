@@ -1,6 +1,6 @@
 /**
  * Application Main Controller (js/app.js)
- * Coordinates UI, IndexedDB persistence, PWA state, and TTS audio playback.
+ * Coordinates UI, IndexedDB persistence, PWA state, flag language picker, and Web Speech Synthesis TTS.
  */
 
 // Application State
@@ -26,14 +26,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupOnlineOfflineStatus();
   registerServiceWorker();
 
-  // Render Initial View
+  // Load saved language setting from localStorage or show flag landing screen
+  const savedLang = localStorage.getItem('travelphrase_lang');
+  if (savedLang && LANGUAGE_FLAGS[savedLang]) {
+    state.currentLang = savedLang;
+  } else {
+    openLangPickerModal(true); // First-time user onboarding screen
+  }
+
+  updateHeaderLangButton();
   renderTopicChips();
   await refreshSavedPhrases();
   renderExploreList();
 });
 
 function initDOMElements() {
-  elements.languageSelect = document.getElementById('language-select');
+  elements.openLangModalBtn = document.getElementById('open-lang-modal-btn');
+  elements.currentLangFlag = document.getElementById('current-lang-flag');
+  elements.currentLangName = document.getElementById('current-lang-name');
+
   elements.connectionStatus = document.getElementById('connection-status');
   elements.themeToggle = document.getElementById('theme-toggle');
   elements.themeIcon = document.getElementById('theme-icon');
@@ -66,6 +77,8 @@ function initDOMElements() {
   elements.flashcard = document.getElementById('flashcard');
   elements.cardTopic = document.getElementById('card-topic');
   elements.cardTopicBack = document.getElementById('card-topic-back');
+  elements.cardFlagFront = document.getElementById('card-flag-front');
+  elements.cardFlagBack = document.getElementById('card-flag-back');
   elements.cardEnglish = document.getElementById('card-english');
   elements.cardTarget = document.getElementById('card-target');
   elements.cardPhonetic = document.getElementById('card-phonetic');
@@ -75,6 +88,12 @@ function initDOMElements() {
   elements.flipCardBtn = document.getElementById('flip-card-btn');
   elements.cardProgress = document.getElementById('card-progress');
   elements.practiceEmptyState = document.getElementById('practice-empty-state');
+
+  // Flag Language Selector Modal
+  elements.langPickerModal = document.getElementById('lang-picker-modal');
+  elements.langModalOverlay = document.getElementById('lang-modal-overlay');
+  elements.closeLangModalBtn = document.getElementById('close-lang-modal-btn');
+  elements.flagGrid = document.getElementById('flag-grid');
 
   // Custom Phrase Modal
   elements.customPhraseModal = document.getElementById('custom-phrase-modal');
@@ -98,15 +117,10 @@ async function initDatabase() {
 
 /* Event Listeners */
 function setupEventListeners() {
-  // Language Change
-  elements.languageSelect.addEventListener('change', (e) => {
-    state.currentLang = e.target.value;
-    refreshSavedPhrases().then(() => {
-      renderExploreList();
-      renderSavedList();
-      setupPracticeMode();
-    });
-  });
+  // Flag Language Picker Modal Controls
+  elements.openLangModalBtn.addEventListener('click', () => openLangPickerModal(false));
+  elements.closeLangModalBtn.addEventListener('click', closeLangPickerModal);
+  elements.langModalOverlay.addEventListener('click', closeLangPickerModal);
 
   // Dark Mode Toggle
   elements.themeToggle.addEventListener('click', toggleTheme);
@@ -197,6 +211,65 @@ function setupEventListeners() {
   });
 }
 
+function updateHeaderLangButton() {
+  const langMeta = LANGUAGE_FLAGS[state.currentLang] || LANGUAGE_FLAGS['es-ES'];
+  elements.currentLangFlag.textContent = langMeta.flag;
+  elements.currentLangName.textContent = langMeta.name;
+}
+
+/* Flag Picker Landing Modal */
+function openLangPickerModal(isFirstLaunch = false) {
+  renderFlagGrid();
+  if (isFirstLaunch) {
+    elements.closeLangModalBtn.classList.add('hidden');
+  } else {
+    elements.closeLangModalBtn.classList.remove('hidden');
+  }
+  elements.langPickerModal.removeAttribute('aria-hidden');
+}
+
+function closeLangPickerModal() {
+  elements.langPickerModal.setAttribute('aria-hidden', 'true');
+}
+
+function renderFlagGrid() {
+  elements.flagGrid.innerHTML = '';
+  Object.keys(LANGUAGE_FLAGS).forEach(code => {
+    const item = LANGUAGE_FLAGS[code];
+    const isSelected = code === state.currentLang;
+
+    const card = document.createElement('button');
+    card.className = `flag-card ${isSelected ? 'selected' : ''}`;
+    card.setAttribute('type', 'button');
+    card.setAttribute('aria-label', `Select ${item.name}`);
+
+    card.innerHTML = `
+      <span class="flag-card__emoji">${item.flag}</span>
+      <span class="flag-card__name">${item.name}</span>
+      <span class="flag-card__native">${item.native}</span>
+    `;
+
+    card.addEventListener('click', () => {
+      selectDestinationLanguage(code);
+    });
+
+    elements.flagGrid.appendChild(card);
+  });
+}
+
+function selectDestinationLanguage(code) {
+  state.currentLang = code;
+  localStorage.setItem('travelphrase_lang', code);
+  updateHeaderLangButton();
+  closeLangPickerModal();
+
+  refreshSavedPhrases().then(() => {
+    renderExploreList();
+    renderSavedList();
+    setupPracticeMode();
+  });
+}
+
 function switchTab(tabId) {
   elements.navItems.forEach(item => {
     const isTarget = item.getAttribute('data-tab') === tabId;
@@ -242,7 +315,6 @@ function setupOnlineOfflineStatus() {
 
 /* Service Worker Registration */
 function registerServiceWorker() {
-  // Check if running under HTTP/HTTPS protocol before registering ServiceWorker
   if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js').catch(err => {
@@ -343,7 +415,6 @@ async function downloadCurrentTopicPhrases() {
   let count = 0;
   for (const p of phrases) {
     await savePhrase(p, state.currentLang);
-    await generateAndCacheAudioBlob(p.id, p.target, state.currentLang);
     count++;
   }
 
@@ -352,7 +423,7 @@ async function downloadCurrentTopicPhrases() {
 
   elements.downloadTopicBtn.disabled = false;
   elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined">download</span> Download Topic for Offline';
-  showToast(`Downloaded ${count} phrases & audio for offline use!`);
+  showToast(`Saved ${count} phrases for offline use!`);
 }
 
 /* SAVED TAB LOGIC */
@@ -393,10 +464,12 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
   const card = document.createElement('div');
   card.className = 'phrase-card';
 
+  const langMeta = LANGUAGE_FLAGS[phrase.lang || state.currentLang] || LANGUAGE_FLAGS['es-ES'];
+
   card.innerHTML = `
     <div class="phrase-card__header">
       <span class="phrase-card__category">${phrase.topic}</span>
-      ${phrase.isCustom ? '<span class="status-chip online" style="font-size: 0.7rem; padding: 2px 6px;">Custom</span>' : ''}
+      <span class="lang-badge">${langMeta.flag} ${langMeta.name}</span>
     </div>
     <div class="phrase-card__body">
       <p class="phrase-card__english">${phrase.english}</p>
@@ -409,7 +482,7 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
         <span>Listen</span>
       </button>
 
-      <button class="button button--outlined save-toggle-btn" aria-label="${isSaved ? 'Remove from saved' : 'Save & Download'}">
+      <button class="button button--outlined save-toggle-btn" aria-label="${isSaved ? 'Remove from saved' : 'Save'}">
         <span class="material-symbols-outlined" aria-hidden="true">${isSaved ? 'bookmark_remove' : 'bookmark_add'}</span>
         <span>${isSaved ? 'Saved' : 'Save'}</span>
       </button>
@@ -428,8 +501,7 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
       showToast('Removed from phrasebook');
     } else {
       await savePhrase(phrase, state.currentLang);
-      await generateAndCacheAudioBlob(phrase.id, phrase.target, state.currentLang);
-      showToast('Saved to phrasebook with offline audio!');
+      showToast('Saved to phrasebook!');
     }
 
     await refreshSavedPhrases();
@@ -446,17 +518,6 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
 /* Audio Playback Handling */
 async function playPhraseAudio(phrase) {
   const targetLang = phrase.lang || state.currentLang;
-  try {
-    const cachedBlob = await getAudioBlob(phrase.id, targetLang);
-    if (cachedBlob && cachedBlob.size > 500) {
-      await playAudioBlob(cachedBlob);
-      return;
-    }
-  } catch (e) {
-    console.warn('Cached blob playback unavailable, using speech synthesis:', e);
-  }
-
-  // Use Speech Synthesis API as primary or fallback
   speakText(phrase.target, targetLang);
 }
 
@@ -485,8 +546,12 @@ function renderFlashcard() {
   const phrase = state.practicePhrases[state.practiceIndex];
   if (!phrase) return;
 
+  const langMeta = LANGUAGE_FLAGS[phrase.lang || state.currentLang] || LANGUAGE_FLAGS['es-ES'];
+
   elements.cardTopic.textContent = phrase.topic;
   elements.cardTopicBack.textContent = phrase.topic;
+  elements.cardFlagFront.textContent = langMeta.flag;
+  elements.cardFlagBack.textContent = langMeta.flag;
   elements.cardEnglish.textContent = phrase.english;
   elements.cardTarget.textContent = phrase.target;
   elements.cardPhonetic.textContent = phrase.phonetic || '';
@@ -521,7 +586,6 @@ async function handleCustomPhraseSubmit(e) {
   if (!english || !target) return;
 
   const phrase = await saveCustomPhrase({ topic, english, target, phonetic }, state.currentLang);
-  await generateAndCacheAudioBlob(phrase.id, phrase.target, state.currentLang);
 
   closeCustomModal();
   showToast('Custom phrase added to your phrasebook!');
