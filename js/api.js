@@ -1,33 +1,78 @@
 /**
  * API and Phrase Catalog Data Module
- * Provides structured topics and translations for offline travel phrasebook.
- * Includes all major European languages + Japanese.
+ * Provides structured topics, translations, and flag metadata for offline travel phrasebook.
+ * Slashes ('/') have been split into individual, distinct phrases.
  */
+
+const LANGUAGE_FLAGS = {
+  "es-ES": { name: "Spanish", native: "Español", flag: "🇪🇸" },
+  "fr-FR": { name: "French", native: "Français", flag: "🇫🇷" },
+  "de-DE": { name: "German", native: "Deutsch", flag: "🇩🇪" },
+  "it-IT": { name: "Italian", native: "Italiano", flag: "🇮🇹" },
+  "pt-PT": { name: "Portuguese", native: "Português", flag: "🇵🇹" },
+  "nl-NL": { name: "Dutch", native: "Nederlands", flag: "🇳🇱" },
+  "pl-PL": { name: "Polish", native: "Polski", flag: "🇵🇱" },
+  "ru-RU": { name: "Russian", native: "Русский", flag: "🇷🇺" },
+  "el-GR": { name: "Greek", native: "Ελληνικά", flag: "🇬🇷" },
+  "sv-SE": { name: "Swedish", native: "Svenska", flag: "🇸🇪" },
+  "da-DK": { name: "Danish", native: "Dansk", flag: "🇩🇰" },
+  "fi-FI": { name: "Finnish", native: "Suomi", flag: "🇫🇮" },
+  "no-NO": { name: "Norwegian", native: "Norsk", flag: "🇳🇴" },
+  "cs-CZ": { name: "Czech", native: "Čeština", flag: "🇨🇿" },
+  "uk-UA": { name: "Ukrainian", native: "Українська", flag: "🇺🇦" },
+  "hu-HU": { name: "Hungarian", native: "Magyar", flag: "🇭🇺" },
+  "tr-TR": { name: "Turkish", native: "Türkçe", flag: "🇹🇷" },
+  "ja-JP": { name: "Japanese", native: "日本語", flag: "🇯🇵" }
+};
 
 const PHRASE_CATALOG = {
   "Greetings & Basics": [
     {
-      id: "greetings_1",
-      english: "Hello / Good day",
+      id: "greetings_1a",
+      english: "Hello",
       translations: {
-        "es-ES": { target: "Hola / Buenos días", phonetic: "Oh-lah / Bway-nos dee-as" },
+        "es-ES": { target: "Hola", phonetic: "Oh-lah" },
         "fr-FR": { target: "Bonjour", phonetic: "Bohn-zhoor" },
+        "de-DE": { target: "Hallo", phonetic: "Hah-loh" },
+        "it-IT": { target: "Ciao", phonetic: "Chow" },
+        "pt-PT": { target: "Olá", phonetic: "Oh-lah" },
+        "nl-NL": { target: "Hallo", phonetic: "Hah-loh" },
+        "pl-PL": { target: "Cześć", phonetic: "Chesch" },
+        "ru-RU": { target: "Привет", phonetic: "Pree-vyet" },
+        "el-GR": { target: "Γειά σου", phonetic: "Yah soo" },
+        "sv-SE": { target: "Hej", phonetic: "Hey" },
+        "da-DK": { target: "Hej", phonetic: "Hay" },
+        "fi-FI": { target: "Hei", phonetic: "Hay" },
+        "no-NO": { target: "Hei", phonetic: "Hay" },
+        "cs-CZ": { target: "Ahoj", phonetic: "Ah-hoy" },
+        "uk-UA": { target: "Привіт", phonetic: "Pry-vit" },
+        "hu-HU": { target: "Szia", phonetic: "See-ah" },
+        "tr-TR": { target: "Merhaba", phonetic: "Mer-ha-ba" },
+        "ja-JP": { target: "こんにちは", phonetic: "Konnichiwa" }
+      }
+    },
+    {
+      id: "greetings_1b",
+      english: "Good day",
+      translations: {
+        "es-ES": { target: "Buenos días", phonetic: "Bway-nos dee-as" },
+        "fr-FR": { target: "Bonne journée", phonetic: "Bohn zhoor-nay" },
         "de-DE": { target: "Guten Tag", phonetic: "Goo-ten tahk" },
         "it-IT": { target: "Buongiorno", phonetic: "Bwon-zhor-no" },
-        "pt-PT": { target: "Olá / Bom dia", phonetic: "Oh-lah / Bohm dee-ah" },
-        "nl-NL": { target: "Hallo / Goedendag", phonetic: "Hah-loh / Khoo-yuhn-dahkh" },
+        "pt-PT": { target: "Bom dia", phonetic: "Bohm dee-ah" },
+        "nl-NL": { target: "Goedendag", phonetic: "Khoo-yuhn-dahkh" },
         "pl-PL": { target: "Dzień dobry", phonetic: "Jeyn dob-ry" },
-        "ru-RU": { target: "Здравствуйте", phonetic: "Zdrav-stvoy-te" },
-        "el-GR": { target: "Γειά σας", phonetic: "Yah sas" },
-        "sv-SE": { target: "Hej / God dag", phonetic: "Hey / Goh dahg" },
-        "da-DK": { target: "Hej / Goddag", phonetic: "Hay / Goh-dah" },
-        "fi-FI": { target: "Hei / Hyvää päivää", phonetic: "Hay / Hoo-vaa py-vaa" },
-        "no-NO": { target: "Hei / God dag", phonetic: "Hay / Go dahg" },
+        "ru-RU": { target: "Добрый день", phonetic: "Dob-ry den" },
+        "el-GR": { target: "Καλημέρα", phonetic: "Ka-lee-meh-ra" },
+        "sv-SE": { target: "God dag", phonetic: "Goh dahg" },
+        "da-DK": { target: "Goddag", phonetic: "Goh-dah" },
+        "fi-FI": { target: "Hyvää päivää", phonetic: "Hoo-vaa py-vaa" },
+        "no-NO": { target: "God dag", phonetic: "Go dahg" },
         "cs-CZ": { target: "Dobrý den", phonetic: "Dob-ree den" },
         "uk-UA": { target: "Доброго дня", phonetic: "Dob-ro-ho dni-a" },
         "hu-HU": { target: "Jó napot", phonetic: "Yoh nah-pot" },
-        "tr-TR": { target: "Merhaba / İyi günler", phonetic: "Mer-ha-ba / Ee-yee goon-ler" },
-        "ja-JP": { target: "こんにちは", phonetic: "Konnichiwa" }
+        "tr-TR": { target: "İyi günler", phonetic: "Ee-yee goon-ler" },
+        "ja-JP": { target: "良い一日を", phonetic: "Yoi ichinichi o" }
       }
     },
     {
@@ -43,7 +88,7 @@ const PHRASE_CATALOG = {
         "pl-PL": { target: "Proszę", phonetic: "Pro-sheh" },
         "ru-RU": { target: "Пожалуйста", phonetic: "Pa-zhal-uy-sta" },
         "el-GR": { target: "Παρακαλώ", phonetic: "Par-a-ka-lo" },
-        "sv-SE": { target: "Snälla / Tack", phonetic: "Snel-lah / Tahk" },
+        "sv-SE": { target: "Snälla", phonetic: "Snel-lah" },
         "da-DK": { target: "Vær så venlig", phonetic: "Vair soh ven-lee" },
         "fi-FI": { target: "Ole hyvä", phonetic: "Oh-leh hoo-vah" },
         "no-NO": { target: "Vær så snill", phonetic: "Vair soh sneel" },
@@ -62,7 +107,7 @@ const PHRASE_CATALOG = {
         "fr-FR": { target: "Merci beaucoup", phonetic: "Mair-see boh-koo" },
         "de-DE": { target: "Vielen Dank", phonetic: "Fee-len dahnk" },
         "it-IT": { target: "Grazie mille", phonetic: "Grah-tsee-ay meel-lay" },
-        "pt-PT": { target: "Muito obrigado/a", phonetic: "Moy-toh oh-bree-gah-doh" },
+        "pt-PT": { target: "Muito obrigado", phonetic: "Moy-toh oh-bree-gah-doh" },
         "nl-NL": { target: "Dank u wel", phonetic: "Dahnk oo wel" },
         "pl-PL": { target: "Dziękuję bardzo", phonetic: "Jen-koo-yeh bar-dzo" },
         "ru-RU": { target: "Большое спасибо", phonetic: "Bol-shoye spa-see-ba" },
@@ -79,51 +124,99 @@ const PHRASE_CATALOG = {
       }
     },
     {
-      id: "greetings_4",
-      english: "Yes / No",
+      id: "greetings_4a",
+      english: "Yes",
       translations: {
-        "es-ES": { target: "Sí / No", phonetic: "See / Noh" },
-        "fr-FR": { target: "Oui / Non", phonetic: "Wee / Noh" },
-        "de-DE": { target: "Ja / Nein", phonetic: "Yah / Nine" },
-        "it-IT": { target: "Sì / No", phonetic: "See / Noh" },
-        "pt-PT": { target: "Sim / Não", phonetic: "Seem / Now" },
-        "nl-NL": { target: "Ja / Nee", phonetic: "Yah / Nay" },
-        "pl-PL": { target: "Tak / Nie", phonetic: "Tahk / Nyeh" },
-        "ru-RU": { target: "Да / Нет", phonetic: "Da / Nyet" },
-        "el-GR": { target: "Ναι / Όχι", phonetic: "Neh / O-chee" },
-        "sv-SE": { target: "Ja / Nej", phonetic: "Yah / Nay" },
-        "da-DK": { target: "Ja / Nej", phonetic: "Yah / Nay" },
-        "fi-FI": { target: "Kyllä / Ei", phonetic: "Kool-la / Ay" },
-        "no-NO": { target: "Ja / Nei", phonetic: "Yah / Nay" },
-        "cs-CZ": { target: "Ano / Ne", phonetic: "Ah-no / Ne" },
-        "uk-UA": { target: "Так / Ні", phonetic: "Tak / Ni" },
-        "hu-HU": { target: "Igen / Nem", phonetic: "Ee-gen / Nem" },
-        "tr-TR": { target: "Evet / Hayır", phonetic: "E-vet / Ha-yur" },
-        "ja-JP": { target: "はい / いいえ", phonetic: "Hai / Iie" }
+        "es-ES": { target: "Sí", phonetic: "See" },
+        "fr-FR": { target: "Oui", phonetic: "Wee" },
+        "de-DE": { target: "Ja", phonetic: "Yah" },
+        "it-IT": { target: "Sì", phonetic: "See" },
+        "pt-PT": { target: "Sim", phonetic: "Seem" },
+        "nl-NL": { target: "Ja", phonetic: "Yah" },
+        "pl-PL": { target: "Tak", phonetic: "Tahk" },
+        "ru-RU": { target: "Да", phonetic: "Da" },
+        "el-GR": { target: "Ναι", phonetic: "Neh" },
+        "sv-SE": { target: "Ja", phonetic: "Yah" },
+        "da-DK": { target: "Ja", phonetic: "Yah" },
+        "fi-FI": { target: "Kyllä", phonetic: "Kool-la" },
+        "no-NO": { target: "Ja", phonetic: "Yah" },
+        "cs-CZ": { target: "Ano", phonetic: "Ah-no" },
+        "uk-UA": { target: "Так", phonetic: "Tak" },
+        "hu-HU": { target: "Igen", phonetic: "Ee-gen" },
+        "tr-TR": { target: "Evet", phonetic: "E-vet" },
+        "ja-JP": { target: "はい", phonetic: "Hai" }
       }
     },
     {
-      id: "greetings_5",
-      english: "Excuse me / Sorry",
+      id: "greetings_4b",
+      english: "No",
       translations: {
-        "es-ES": { target: "Disculpe / Lo siento", phonetic: "Dees-kool-peh / Loh syen-toh" },
-        "fr-FR": { target: "Pardon / Excusez-moi", phonetic: "Par-dohn / Ehk-skew-zay mwah" },
+        "es-ES": { target: "No", phonetic: "Noh" },
+        "fr-FR": { target: "Non", phonetic: "Noh" },
+        "de-DE": { target: "Nein", phonetic: "Nine" },
+        "it-IT": { target: "No", phonetic: "Noh" },
+        "pt-PT": { target: "Não", phonetic: "Now" },
+        "nl-NL": { target: "Nee", phonetic: "Nay" },
+        "pl-PL": { target: "Nie", phonetic: "Nyeh" },
+        "ru-RU": { target: "Нет", phonetic: "Nyet" },
+        "el-GR": { target: "Όχι", phonetic: "O-chee" },
+        "sv-SE": { target: "Nej", phonetic: "Nay" },
+        "da-DK": { target: "Nej", phonetic: "Nay" },
+        "fi-FI": { target: "Ei", phonetic: "Ay" },
+        "no-NO": { target: "Nei", phonetic: "Nay" },
+        "cs-CZ": { target: "Ne", phonetic: "Ne" },
+        "uk-UA": { target: "Ні", phonetic: "Ni" },
+        "hu-HU": { target: "Nem", phonetic: "Nem" },
+        "tr-TR": { target: "Hayır", phonetic: "Ha-yur" },
+        "ja-JP": { target: "いいえ", phonetic: "Iie" }
+      }
+    },
+    {
+      id: "greetings_5a",
+      english: "Excuse me",
+      translations: {
+        "es-ES": { target: "Disculpe", phonetic: "Dees-kool-peh" },
+        "fr-FR": { target: "Excusez-moi", phonetic: "Ehk-skew-zay mwah" },
         "de-DE": { target: "Entschuldigung", phonetic: "Ent-shool-dee-goong" },
-        "it-IT": { target: "Mi scusi / Mi dispiace", phonetic: "Mee skoo-zee / Mee dees-pyah-chay" },
-        "pt-PT": { target: "Com licença / Desculpe", phonetic: "Kohm lee-sen-sah / Des-kool-peh" },
-        "nl-NL": { target: "Pardon / Sory", phonetic: "Pahr-dohn / Soh-ree" },
+        "it-IT": { target: "Mi scusi", phonetic: "Mee skoo-zee" },
+        "pt-PT": { target: "Com licença", phonetic: "Kohm lee-sen-sah" },
+        "nl-NL": { target: "Pardon", phonetic: "Pahr-dohn" },
         "pl-PL": { target: "Przepraszam", phonetic: "Psheh-prah-sham" },
         "ru-RU": { target: "Извините", phonetic: "Iz-vee-nee-te" },
         "el-GR": { target: "Συγνώμη", phonetic: "Syg-no-mee" },
-        "sv-SE": { target: "Ursäkta / Förlåt", phonetic: "Oor-shek-tah / Foer-loht" },
+        "sv-SE": { target: "Ursäkta", phonetic: "Oor-shek-tah" },
         "da-DK": { target: "Undskyld", phonetic: "Oon-skool" },
         "fi-FI": { target: "Anteeksi", phonetic: "Ahn-teek-see" },
         "no-NO": { target: "Unnskyld", phonetic: "Oon-sheel" },
         "cs-CZ": { target: "Promiňte", phonetic: "Pro-min-te" },
         "uk-UA": { target: "Вибачте", phonetic: "Vy-bach-te" },
         "hu-HU": { target: "Elnézést", phonetic: "El-nay-zaysht" },
-        "tr-TR": { target: "Affedersiniz / Özür dilerim", phonetic: "Af-fe-der-si-niz / Oe-zoor dee-le-reem" },
+        "tr-TR": { target: "Affedersiniz", phonetic: "Af-fe-der-si-niz" },
         "ja-JP": { target: "すみません", phonetic: "Sumimasen" }
+      }
+    },
+    {
+      id: "greetings_5b",
+      english: "Sorry",
+      translations: {
+        "es-ES": { target: "Lo siento", phonetic: "Loh syen-toh" },
+        "fr-FR": { target: "Pardon", phonetic: "Par-dohn" },
+        "de-DE": { target: "Es tut mir leid", phonetic: "Es toot meer lite" },
+        "it-IT": { target: "Mi dispiace", phonetic: "Mee dees-pyah-chay" },
+        "pt-PT": { target: "Desculpe", phonetic: "Des-kool-peh" },
+        "nl-NL": { target: "Sorry", phonetic: "Soh-ree" },
+        "pl-PL": { target: "Przepraszam", phonetic: "Psheh-prah-sham" },
+        "ru-RU": { target: "Простите", phonetic: "Pro-stee-te" },
+        "el-GR": { target: "Lypámai", phonetic: "Lee-pah-meh" },
+        "sv-SE": { target: "Förlåt", phonetic: "Foer-loht" },
+        "da-DK": { target: "Undskyld", phonetic: "Oon-skool" },
+        "fi-FI": { target: "Olen pahoillani", phonetic: "Oh-len pah-hoyl-lah-nee" },
+        "no-NO": { target: "Beklager", phonetic: "Beh-klah-ger" },
+        "cs-CZ": { target: "Omlouvám se", phonetic: "Om-loo-vahm se" },
+        "uk-UA": { target: "Пробачте", phonetic: "Pro-bach-te" },
+        "hu-HU": { target: "Bocsánat", phonetic: "Boh-chah-not" },
+        "tr-TR": { target: "Özür dilerim", phonetic: "Oe-zoor dee-le-reem" },
+        "ja-JP": { target: "ごめんなさい", phonetic: "Gomen nasai" }
       }
     }
   ],
@@ -154,8 +247,8 @@ const PHRASE_CATALOG = {
       }
     },
     {
-      id: "food_2",
-      english: "The check/bill, please",
+      id: "food_2a",
+      english: "The check, please",
       translations: {
         "es-ES": { target: "La cuenta, por favor", phonetic: "Lah kwen-tah, por fah-bor" },
         "fr-FR": { target: "L'addition, s'il vous plaît", phonetic: "Lah-dees-syohn, seel voo pleh" },
@@ -215,7 +308,7 @@ const PHRASE_CATALOG = {
         "fr-FR": { target: "Aidez-moi !", phonetic: "Eh-day mwah!" },
         "de-DE": { target: "Helfen Sie mir!", phonetic: "Hel-fen zee meer!" },
         "it-IT": { target: "Aiuto!", phonetic: "Ah-yoo-toh!" },
-        "pt-PT": { target: "Socorro / Ajuda!", phonetic: "Soh-koh-rroh / Ah-zhoo-dah!" },
+        "pt-PT": { target: "Socorro!", phonetic: "Soh-koh-rroh!" },
         "nl-NL": { target: "Help mij!", phonetic: "Help my!" },
         "pl-PL": { target: "Pomocy!", phonetic: "Po-mo-tsy!" },
         "ru-RU": { target: "Помогите!", phonetic: "Po-mo-gee-te!" },
@@ -227,7 +320,7 @@ const PHRASE_CATALOG = {
         "cs-CZ": { target: "Pomozte mi!", phonetic: "Po-mots-te mee!" },
         "uk-UA": { target: "Допоможіть!", phonetic: "Do-po-mo-zhit!" },
         "hu-HU": { target: "Segítség!", phonetic: "Sheh-geet-sayg!" },
-        "tr-TR": { target: "Imdat / Yardım edin!", phonetic: "Eem-dat / Yar-dum e-deen!" },
+        "tr-TR": { target: "İmdat!", phonetic: "Eem-dat!" },
         "ja-JP": { target: "助けてください！", phonetic: "Tasukete kudasai!" }
       }
     }

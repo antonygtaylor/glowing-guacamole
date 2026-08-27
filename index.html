@@ -34,32 +34,12 @@
       </div>
 
       <div class="top-app-bar__actions">
-        <!-- Language Selector -->
-        <div class="language-select-wrapper">
-          <label for="language-select" class="visually-hidden">Select Target Language</label>
-
-          <span class="material-symbols-outlined select-icon" aria-hidden="true">language</span>
-          <select id="language-select" class="language-select" aria-label="Select Target Language">
-            <option value="es-ES">Spanish (Español)</option>
-            <option value="fr-FR">French (Français)</option>
-            <option value="de-DE">German (Deutsch)</option>
-            <option value="it-IT">Italian (Italiano)</option>
-            <option value="pt-PT">Portuguese (Português)</option>
-            <option value="nl-NL">Dutch (Nederlands)</option>
-            <option value="pl-PL">Polish (Polski)</option>
-            <option value="ru-RU">Russian (Русский)</option>
-            <option value="el-GR">Greek (Ελληνικά)</option>
-            <option value="sv-SE">Swedish (Svenska)</option>
-            <option value="da-DK">Danish (Dansk)</option>
-            <option value="fi-FI">Finnish (Suomi)</option>
-            <option value="no-NO">Norwegian (Norsk)</option>
-            <option value="cs-CZ">Czech (Čeština)</option>
-            <option value="uk-UA">Ukrainian (Українська)</option>
-            <option value="hu-HU">Hungarian (Magyar)</option>
-            <option value="tr-TR">Turkish (Türkçe)</option>
-            <option value="ja-JP">Japanese (日本語)</option>
-          </select>
-        </div>
+        <!-- Flag Language Picker Button -->
+        <button id="open-lang-modal-btn" class="button button--outlined button--flag-picker" aria-label="Change destination language">
+          <span id="current-lang-flag" class="flag-emoji">🇪🇸</span>
+          <span id="current-lang-name" class="lang-text">Spanish</span>
+          <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+        </button>
 
         <!-- Network / Offline Badge -->
         <div id="connection-status" class="status-chip online" role="status" aria-live="polite">
@@ -141,7 +121,7 @@
       <div class="saved-header">
         <div class="saved-header__info">
           <h2 class="section-title">Saved Offline Phrases</h2>
-          <p class="saved-subtitle">Phrases and audio cached on your device for offline travel.</p>
+          <p class="saved-subtitle">Phrases cached on your device for offline travel.</p>
         </div>
         <button id="add-custom-phrase-btn" class="button button--filled">
           <span class="material-symbols-outlined" aria-hidden="true">add</span>
@@ -172,7 +152,7 @@
       <div id="saved-empty-state" class="empty-state hidden">
         <span class="material-symbols-outlined empty-icon" aria-hidden="true">bookmark_border</span>
         <h3>No saved phrases yet</h3>
-        <p>Explore phrases and click "Save & Download" or add your own custom phrases for your trip!</p>
+        <p>Explore phrases and click "Save" or add your own custom phrases for your trip!</p>
         <button id="go-explore-btn" class="button button--outlined">Explore Phrases</button>
       </div>
     </section>
@@ -197,13 +177,19 @@
             <div class="flashcard__inner">
               <!-- Front Side -->
               <div class="flashcard__front">
-                <span class="flashcard__category" id="card-topic">Ordering Food</span>
+                <div class="flashcard__header-row">
+                  <span class="flashcard__category" id="card-topic">Ordering Food</span>
+                  <span class="flashcard__flag-badge" id="card-flag-front">🇪🇸</span>
+                </div>
                 <p class="flashcard__text" id="card-english">Where is the restroom?</p>
                 <p class="flashcard__hint">Tap or press Space to reveal translation</p>
               </div>
               <!-- Back Side -->
               <div class="flashcard__back">
-                <span class="flashcard__category" id="card-topic-back">Ordering Food</span>
+                <div class="flashcard__header-row">
+                  <span class="flashcard__category" id="card-topic-back">Ordering Food</span>
+                  <span class="flashcard__flag-badge" id="card-flag-back">🇪🇸</span>
+                </div>
                 <p class="flashcard__translation" id="card-target">¿Dónde está el baño?</p>
                 <p class="flashcard__phonetic" id="card-phonetic">Dohn-deh ehs-tah el bah-nyoh</p>
                 <button id="card-audio-btn" class="button button--icon-text" aria-label="Play audio">
@@ -242,6 +228,26 @@
       </div>
     </section>
   </main>
+
+  <!-- LANDING / FLAG LANGUAGE SELECTOR MODAL -->
+  <div id="lang-picker-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="lang-modal-title" aria-modal="true">
+    <div class="modal__overlay" id="lang-modal-overlay"></div>
+    <div class="modal__dialog modal__dialog--wide">
+      <div class="modal__header">
+        <div>
+          <h2 id="lang-modal-title" class="modal__title">Where are you traveling to?</h2>
+          <p class="modal__subtitle">Select a destination language to get started with instant phrases and audio.</p>
+        </div>
+        <button id="close-lang-modal-btn" class="icon-button hidden" aria-label="Close modal">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <div id="flag-grid" class="flag-grid">
+        <!-- Flag language cards injected dynamically -->
+      </div>
+    </div>
+  </div>
 
   <!-- ADD CUSTOM PHRASE MODAL -->
   <div id="custom-phrase-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title" aria-modal="true">
