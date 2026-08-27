@@ -1,7 +1,7 @@
 /**
- * Standalone Client-Side Translation Engine (js/translator.js)
- * High-performance offline dictionary & greedy n-gram matching translator
- * supporting 18 languages without external API dependencies.
+ * Standalone Client-Side Translation & Phonetic Engine (js/translator.js)
+ * High-performance offline dictionary, greedy n-gram matching translator,
+ * and automatic phonetic pronunciation guide generator supporting 18 languages.
  */
 
 const DICTIONARY_MATRIX = {
@@ -136,4 +136,87 @@ function translatePhrase(englishText, targetLangCode) {
   raw = raw.replace(/\s+/g, ' ').trim();
 
   return raw.charAt(0).toUpperCase() + raw.slice(1);
+}
+
+/**
+ * Phonetic Guide Auto-Generator
+ * Converts target language text into readable phonetic pronunciation guide.
+ */
+function generatePhoneticGuide(targetText, langCode) {
+  if (!targetText || !targetText.trim()) return "";
+
+  const text = targetText.trim();
+
+  // 1. Check catalog exact match for verified phonetic guide
+  if (typeof PHRASE_CATALOG !== 'undefined') {
+    for (const topic of Object.keys(PHRASE_CATALOG)) {
+      for (const item of PHRASE_CATALOG[topic]) {
+        const trans = item.translations[langCode];
+        if (trans && trans.target && trans.target.toLowerCase() === text.toLowerCase()) {
+          if (trans.phonetic) return trans.phonetic;
+        }
+      }
+    }
+  }
+
+  // 2. Rule-based phonetic transliteration by language family
+  const langPrefix = langCode.slice(0, 2);
+
+  if (langPrefix === 'es') { // Spanish rule-based syllabification
+    return text.toLowerCase()
+      .replace(/que/g, 'keh').replace(/qui/g, 'kee')
+      .replace(/ge/g, 'heh').replace(/gi/g, 'hee')
+      .replace(/güe/g, 'gweh').replace(/güi/g, 'gwee')
+      .replace(/ce/g, 'seh').replace(/ci/g, 'see')
+      .replace(/z/g, 'th').replace(/ñ/g, 'ny')
+      .replace(/ll/g, 'y').replace(/rr/g, 'r-r')
+      .replace(/h/g, '').replace(/j/g, 'h')
+      .replace(/ch/g, 'ch').replace(/v/g, 'b')
+      .replace(/\?/g, '').replace(/¿/g, '');
+  }
+
+  if (langPrefix === 'fr') { // French
+    return text.toLowerCase()
+      .replace(/eau/g, 'oh').replace(/eau/g, 'oh')
+      .replace(/oi/g, 'wah').replace(/ou/g, 'oo')
+      .replace(/ch/g, 'sh').replace(/qu/g, 'k')
+      .replace(/ç/g, 's').replace(/ai/g, 'eh')
+      .replace(/ez\b/g, 'ay').replace(/er\b/g, 'ay');
+  }
+
+  if (langPrefix === 'de') { // German
+    return text.toLowerCase()
+      .replace(/sch/g, 'sh').replace(/sp/g, 'shp')
+      .replace(/st/g, 'sht').replace(/ei/g, 'eye')
+      .replace(/ie/g, 'ee').replace(/eu/g, 'oy')
+      .replace(/ä/g, 'eh').replace(/ö/g, 'oe')
+      .replace(/ü/g, 'ue').replace(/β/g, 'ss')
+      .replace(/z/g, 'ts').replace(/v/g, 'f')
+      .replace(/w/g, 'v');
+  }
+
+  if (langPrefix === 'it') { // Italian
+    return text.toLowerCase()
+      .replace(/che/g, 'keh').replace(/chi/g, 'kee')
+      .replace(/ce/g, 'ch-eh').replace(/ci/g, 'chee')
+      .replace(/gne/g, 'nyeh').replace(/gni/g, 'nyee')
+      .replace(/gli/g, 'lyee').replace(/z/g, 'ts');
+  }
+
+  if (langPrefix === 'ru' || langPrefix === 'uk') { // Cyrillic transliteration
+    const cyrillicMap = {
+      'а':'a','б':'b','в':'v','г':'g','д':'d','е':'ye','ё':'yo','ж':'zh',
+      'з':'z','и':'ee','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o',
+      'п':'p','р':'r','с':'s','т':'t','у':'oo','ф':'f','х':'kh','ц':'ts',
+      'ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yoo','я':'ya'
+    };
+    return text.toLowerCase().split('').map(c => cyrillicMap[c] || c).join('');
+  }
+
+  if (langPrefix === 'ja') { // Japanese Romaji fallback
+    return text; // Japanese phrases in catalog carry romaji phonetics
+  }
+
+  // Fallback:Hyphenated word representation
+  return text.toLowerCase().split(/\s+/).join('-');
 }

@@ -175,6 +175,7 @@ function setupEventListeners() {
   translateBtn?.addEventListener('click', async () => {
     const englishInput = document.getElementById('custom-english');
     const targetInput = document.getElementById('custom-target');
+    const phoneticInput = document.getElementById('custom-phonetic');
     const englishVal = englishInput ? englishInput.value.trim() : '';
 
     if (!englishVal) {
@@ -197,6 +198,12 @@ function setupEventListeners() {
 
       if (autoTrans && targetInput) {
         targetInput.value = autoTrans;
+
+        // Auto-fill phonetic guide
+        if (phoneticInput && typeof generatePhoneticGuide === 'function') {
+          phoneticInput.value = generatePhoneticGuide(autoTrans, state.currentLang);
+        }
+
         showToast('Translation generated');
       } else {
         showToast('Translation completed');
@@ -208,6 +215,21 @@ function setupEventListeners() {
       translateBtn.disabled = false;
       translateBtn.innerHTML = origBtnContent;
     }
+  });
+
+  // Auto-generate Phonetic guide when user manually edits or enters Target translation
+  const customTargetEl = document.getElementById('custom-target');
+  let phoneticDebounce;
+  customTargetEl?.addEventListener('input', (e) => {
+    clearTimeout(phoneticDebounce);
+    const targetVal = e.target.value;
+    const phoneticInput = document.getElementById('custom-phonetic');
+
+    phoneticDebounce = setTimeout(() => {
+      if (targetVal && phoneticInput && typeof generatePhoneticGuide === 'function') {
+        phoneticInput.value = generatePhoneticGuide(targetVal, state.currentLang);
+      }
+    }, 250);
   });
 
   // Practice Mode Controls
