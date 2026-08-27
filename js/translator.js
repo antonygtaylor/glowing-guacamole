@@ -140,7 +140,8 @@ function translatePhrase(englishText, targetLangCode) {
 
 /**
  * Phonetic Guide Auto-Generator
- * Converts target language text into readable phonetic pronunciation guide.
+ * Converts target language text into readable phonetic pronunciation guide matching preloaded catalog style
+ * (e.g. "Dohn-deh ehs-tah el bah-nyoh").
  */
 function generatePhoneticGuide(targetText, langCode) {
   if (!targetText || !targetText.trim()) return "";
@@ -159,64 +160,70 @@ function generatePhoneticGuide(targetText, langCode) {
     }
   }
 
-  // 2. Rule-based phonetic transliteration by language family
   const langPrefix = langCode.slice(0, 2);
+  const words = text.split(/\s+/);
+  let wordPhonetics = [];
 
-  if (langPrefix === 'es') { // Spanish rule-based syllabification
-    return text.toLowerCase()
-      .replace(/que/g, 'keh').replace(/qui/g, 'kee')
-      .replace(/ge/g, 'heh').replace(/gi/g, 'hee')
-      .replace(/güe/g, 'gweh').replace(/güi/g, 'gwee')
-      .replace(/ce/g, 'seh').replace(/ci/g, 'see')
-      .replace(/z/g, 'th').replace(/ñ/g, 'ny')
-      .replace(/ll/g, 'y').replace(/rr/g, 'r-r')
-      .replace(/h/g, '').replace(/j/g, 'h')
-      .replace(/ch/g, 'ch').replace(/v/g, 'b')
-      .replace(/\?/g, '').replace(/¿/g, '');
+  for (let w = 0; w < words.length; w++) {
+    let rawWord = words[w].replace(/[^\w\u00C0-\u024F\u0370-\u03FF\u0400-\u04FF\u3040-\u30FF\u4E00-\u9FFF]/g, '').toLowerCase();
+    if (!rawWord) continue;
+
+    let phon = '';
+
+    if (langPrefix === 'es') { // Spanish syllabification & phonetic rendering
+      phon = rawWord
+        .replace(/dónde/g, 'dohn-deh').replace(/donde/g, 'dohn-deh')
+        .replace(/está/g, 'ehs-tah').replace(/esta/g, 'ehs-tah')
+        .replace(/hotel/g, 'oh-tel').replace(/baño/g, 'bah-nyoh')
+        .replace(/aeropuerto/g, 'ah-eh-roh-pwer-toh')
+        .replace(/cuenta/g, 'kwen-tah').replace(/favor/g, 'fah-bor')
+        .replace(/gracias/g, 'grah-syas').replace(/hola/g, 'oh-lah')
+        .replace(/buenos/g, 'bway-nos').replace(/días/g, 'dee-as')
+        .replace(/que/g, 'keh').replace(/qui/g, 'kee')
+        .replace(/ge/g, 'heh').replace(/gi/g, 'hee')
+        .replace(/ce/g, 'seh').replace(/ci/g, 'see')
+        .replace(/z/g, 'th').replace(/ñ/g, 'ny')
+        .replace(/ll/g, 'y').replace(/rr/g, 'r-r')
+        .replace(/h/g, '').replace(/j/g, 'h')
+        .replace(/v/g, 'b');
+
+      if (!phon.includes('-') && phon.length > 3) {
+        // syllabify long words
+        phon = phon.replace(/([aeiou])([bcdfghjlmnpqrstvwxyz]{1,2})([aeiou])/g, '$1-$2$3');
+      }
+    } else if (langPrefix === 'fr') { // French
+      phon = rawWord
+        .replace(/bonjour/g, 'bohn-zhoor').replace(/merci/g, 'mair-see')
+        .replace(/eau/g, 'oh').replace(/oi/g, 'wah').replace(/ou/g, 'oo')
+        .replace(/ch/g, 'sh').replace(/qu/g, 'k').replace(/ç/g, 's')
+        .replace(/ez$/g, 'ay').replace(/er$/g, 'ay');
+    } else if (langPrefix === 'de') { // German
+      phon = rawWord
+        .replace(/hallo/g, 'hah-loh').replace(/danke/g, 'dahnk-eh')
+        .replace(/sch/g, 'sh').replace(/sp/g, 'shp').replace(/st/g, 'sht')
+        .replace(/ei/g, 'eye').replace(/ie/g, 'ee').replace(/eu/g, 'oy')
+        .replace(/z/g, 'ts').replace(/v/g, 'f').replace(/w/g, 'v');
+    } else if (langPrefix === 'it') { // Italian
+      phon = rawWord
+        .replace(/ciao/g, 'chow').replace(/grazie/g, 'grah-tsee-ay')
+        .replace(/che/g, 'keh').replace(/chi/g, 'kee').replace(/ce/g, 'ch-eh')
+        .replace(/ci/g, 'chee').replace(/gne/g, 'nyeh').replace(/z/g, 'ts');
+    } else if (langPrefix === 'ru' || langPrefix === 'uk') { // Cyrillic
+      const cyrillicMap = {
+        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'ye','ё':'yo','ж':'zh',
+        'з':'z','и':'ee','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o',
+        'п':'p','р':'r','с':'s','т':'t','у':'oo','ф':'f','х':'kh','ц':'ts',
+        'ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yoo','я':'ya'
+      };
+      phon = rawWord.split('').map(c => cyrillicMap[c] || c).join('');
+    } else {
+      phon = rawWord;
+    }
+
+    wordPhonetics.push(phon);
   }
 
-  if (langPrefix === 'fr') { // French
-    return text.toLowerCase()
-      .replace(/eau/g, 'oh').replace(/eau/g, 'oh')
-      .replace(/oi/g, 'wah').replace(/ou/g, 'oo')
-      .replace(/ch/g, 'sh').replace(/qu/g, 'k')
-      .replace(/ç/g, 's').replace(/ai/g, 'eh')
-      .replace(/ez\b/g, 'ay').replace(/er\b/g, 'ay');
-  }
-
-  if (langPrefix === 'de') { // German
-    return text.toLowerCase()
-      .replace(/sch/g, 'sh').replace(/sp/g, 'shp')
-      .replace(/st/g, 'sht').replace(/ei/g, 'eye')
-      .replace(/ie/g, 'ee').replace(/eu/g, 'oy')
-      .replace(/ä/g, 'eh').replace(/ö/g, 'oe')
-      .replace(/ü/g, 'ue').replace(/β/g, 'ss')
-      .replace(/z/g, 'ts').replace(/v/g, 'f')
-      .replace(/w/g, 'v');
-  }
-
-  if (langPrefix === 'it') { // Italian
-    return text.toLowerCase()
-      .replace(/che/g, 'keh').replace(/chi/g, 'kee')
-      .replace(/ce/g, 'ch-eh').replace(/ci/g, 'chee')
-      .replace(/gne/g, 'nyeh').replace(/gni/g, 'nyee')
-      .replace(/gli/g, 'lyee').replace(/z/g, 'ts');
-  }
-
-  if (langPrefix === 'ru' || langPrefix === 'uk') { // Cyrillic transliteration
-    const cyrillicMap = {
-      'а':'a','б':'b','в':'v','г':'g','д':'d','е':'ye','ё':'yo','ж':'zh',
-      'з':'z','и':'ee','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o',
-      'п':'p','р':'r','с':'s','т':'t','у':'oo','ф':'f','х':'kh','ц':'ts',
-      'ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yoo','я':'ya'
-    };
-    return text.toLowerCase().split('').map(c => cyrillicMap[c] || c).join('');
-  }
-
-  if (langPrefix === 'ja') { // Japanese Romaji fallback
-    return text; // Japanese phrases in catalog carry romaji phonetics
-  }
-
-  // Fallback:Hyphenated word representation
-  return text.toLowerCase().split(/\s+/).join('-');
+  let formatted = wordPhonetics.join(' ');
+  // Sentence capitalize first word (matching preloaded style)
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
