@@ -62,8 +62,8 @@
       <span class="nav-item__label">Explore</span>
     </button>
     <button class="nav-item" id="nav-saved" data-tab="tab-saved" role="tab" aria-selected="false" aria-controls="tab-saved">
-      <span class="material-symbols-outlined nav-item__icon" aria-hidden="true">bookmark</span>
-      <span class="nav-item__label">My Phrasebook</span>
+      <span class="material-symbols-outlined nav-item__icon" aria-hidden="true">push_pin</span>
+      <span class="nav-item__label">Pinned Phrases</span>
       <span id="saved-count-badge" class="badge">0</span>
     </button>
     <button class="nav-item" id="nav-practice" data-tab="tab-practice" role="tab" aria-selected="false" aria-controls="tab-practice">
@@ -115,13 +115,13 @@
       </div>
     </section>
 
-    <!-- TAB 2: MY PHRASEBOOK (OFFLINE SAVED) -->
+    <!-- TAB 2: PINNED PHRASES (OFFLINE SAVED) -->
     <section id="tab-saved" class="tab-panel" role="tabpanel" aria-labelledby="nav-saved" hidden>
 
       <div class="saved-header">
         <div class="saved-header__info">
-          <h2 class="section-title">Saved Offline Phrases</h2>
-          <p class="saved-subtitle">Phrases cached on your device for offline travel.</p>
+          <h2 class="section-title">Pinned Offline Phrases</h2>
+          <p class="saved-subtitle">Phrases pinned on your device for offline travel.</p>
         </div>
         <button id="add-custom-phrase-btn" class="button button--filled">
           <span class="material-symbols-outlined" aria-hidden="true">add</span>
@@ -133,12 +133,12 @@
       <div class="filter-row">
         <div class="search-bar search-bar--sm">
           <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
-          <input type="search" id="saved-search" class="search-input" placeholder="Search saved phrases..." aria-label="Search saved phrases">
+          <input type="search" id="saved-search" class="search-input" placeholder="Search pinned phrases..." aria-label="Search pinned phrases">
         </div>
 
         <div class="select-wrapper">
-          <select id="saved-topic-filter" class="topic-select" aria-label="Filter saved phrases by topic">
-            <option value="all">All Saved Topics</option>
+          <select id="saved-topic-filter" class="topic-select" aria-label="Filter pinned phrases by topic">
+            <option value="all">All Pinned Topics</option>
           </select>
         </div>
       </div>
@@ -150,9 +150,9 @@
 
       <!-- Empty state container -->
       <div id="saved-empty-state" class="empty-state hidden">
-        <span class="material-symbols-outlined empty-icon" aria-hidden="true">bookmark_border</span>
-        <h3>No saved phrases yet</h3>
-        <p>Explore phrases and click "Save" or add your own custom phrases for your trip!</p>
+        <span class="material-symbols-outlined empty-icon" aria-hidden="true">push_pin</span>
+        <h3>No pinned phrases yet</h3>
+        <p>Explore phrases and click "Pin" or add your own custom phrases for your trip!</p>
         <button id="go-explore-btn" class="button button--outlined">Explore Phrases</button>
       </div>
     </section>
@@ -165,7 +165,7 @@
         <div class="practice-controls">
           <label for="practice-topic-select" class="visually-hidden">Select practice category</label>
           <select id="practice-topic-select" class="topic-select" aria-label="Select practice topic">
-            <option value="all">All Saved Phrases</option>
+            <option value="all">All Pinned Phrases</option>
           </select>
         </div>
       </div>
@@ -306,6 +306,7 @@
   <!-- JS Scripts -->
   <script src="js/db.js" defer></script>
   <script src="js/api.js" defer></script>
+  <script src="js/translator.js" defer></script>
   <script src="js/tts.js" defer></script>
   <script src="js/app.js" defer></script>
 </body>

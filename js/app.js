@@ -170,6 +170,30 @@ function setupEventListeners() {
   elements.cancelCustomBtn?.addEventListener('click', closeCustomModal);
   elements.customPhraseForm?.addEventListener('submit', handleCustomPhraseSubmit);
 
+  // Auto-Translation listener on English input
+  const customEnglishEl = document.getElementById('custom-english');
+  let translateDebounce;
+  customEnglishEl?.addEventListener('input', (e) => {
+    clearTimeout(translateDebounce);
+    const val = e.target.value;
+    translateDebounce = setTimeout(() => {
+      let autoTrans = '';
+      if (typeof translatePhrase === 'function' && val) {
+        autoTrans = translatePhrase(val, state.currentLang);
+      } else if (typeof translateText === 'function' && val) {
+        translateText(val, state.currentLang).then(res => {
+          const targetInput = document.getElementById('custom-target');
+          if (res && targetInput && !targetInput.value) targetInput.value = res;
+        });
+        return;
+      }
+      const targetInput = document.getElementById('custom-target');
+      if (autoTrans && targetInput && !targetInput.value) {
+        targetInput.value = autoTrans;
+      }
+    }, 300);
+  });
+
   // Practice Mode Controls
   elements.practiceTopicSelect?.addEventListener('change', (e) => {
     setupPracticeMode(e.target.value);
@@ -213,8 +237,8 @@ function setupEventListeners() {
 
 function updateHeaderLangButton() {
   const flags = typeof LANGUAGE_FLAGS !== 'undefined' ? LANGUAGE_FLAGS : {};
-  const langMeta = flags[state.currentLang] || flags['es-ES'] || { flag: '🇪🇸', name: 'Spanish' };
-  if (elements.currentLangFlag) elements.currentLangFlag.textContent = langMeta.flag;
+  const langMeta = flags[state.currentLang] || flags['es-ES'] || { svg: '', name: 'Spanish' };
+  if (elements.currentLangFlag) elements.currentLangFlag.innerHTML = langMeta.svg || '🇪🇸';
   if (elements.currentLangName) elements.currentLangName.textContent = langMeta.name;
 }
 
@@ -248,7 +272,7 @@ function renderFlagGrid() {
     card.setAttribute('aria-label', `Select ${item.name}`);
 
     card.innerHTML = `
-      <span class="flag-card__emoji">${item.flag}</span>
+      <span class="flag-card__emoji">${item.svg || '🇪🇸'}</span>
       <span class="flag-card__name">${item.name}</span>
       <span class="flag-card__native">${item.native}</span>
     `;
@@ -345,8 +369,8 @@ async function refreshSavedPhrases() {
 
 function updateSavedTopicFilterOptions() {
   const topics = new Set(state.savedPhrases.map(p => p.topic));
-  if (elements.savedTopicFilter) elements.savedTopicFilter.innerHTML = '<option value="all">All Saved Topics</option>';
-  if (elements.practiceTopicSelect) elements.practiceTopicSelect.innerHTML = '<option value="all">All Saved Phrases</option>';
+  if (elements.savedTopicFilter) elements.savedTopicFilter.innerHTML = '<option value="all">All Pinned Topics</option>';
+  if (elements.practiceTopicSelect) elements.practiceTopicSelect.innerHTML = '<option value="all">All Pinned Phrases</option>';
 
   topics.forEach(t => {
     const opt = document.createElement('option');
@@ -419,7 +443,7 @@ async function downloadCurrentTopicPhrases() {
   const phrases = typeof getPhrasesByTopic === 'function' ? getPhrasesByTopic(state.currentTopic, state.currentLang) : [];
   if (elements.downloadTopicBtn) {
     elements.downloadTopicBtn.disabled = true;
-    elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined spin">sync</span> Saving...';
+    elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined spin">sync</span> Pinning...';
   }
 
   let count = 0;
@@ -433,9 +457,9 @@ async function downloadCurrentTopicPhrases() {
 
   if (elements.downloadTopicBtn) {
     elements.downloadTopicBtn.disabled = false;
-    elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined">download</span> Download Topic for Offline';
+    elements.downloadTopicBtn.innerHTML = '<span class="material-symbols-outlined">push_pin</span> Pin Topic for Offline';
   }
-  showToast(`Saved ${count} phrases for offline use!`);
+  showToast(`Pinned ${count} phrases for offline use!`);
 }
 
 /* SAVED TAB LOGIC */
@@ -483,7 +507,7 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
   card.innerHTML = `
     <div class="phrase-card__header">
       <span class="phrase-card__category">${phrase.topic}</span>
-      <span class="lang-badge">${langMeta.flag} ${langMeta.name}</span>
+      <span class="lang-badge">${langMeta.svg || ''} ${langMeta.name}</span>
     </div>
     <div class="phrase-card__body">
       <p class="phrase-card__english">${phrase.english}</p>
@@ -496,9 +520,9 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
         <span>Listen</span>
       </button>
 
-      <button class="button button--outlined save-toggle-btn" aria-label="${isSaved ? 'Remove from saved' : 'Save'}">
-        <span class="material-symbols-outlined" aria-hidden="true">${isSaved ? 'bookmark_remove' : 'bookmark_add'}</span>
-        <span>${isSaved ? 'Saved' : 'Save'}</span>
+      <button class="button button--outlined save-toggle-btn" aria-label="${isSaved ? 'Unpin phrase' : 'Pin phrase'}">
+        <span class="material-symbols-outlined" aria-hidden="true">${isSaved ? 'keep_off' : 'push_pin'}</span>
+        <span>${isSaved ? 'Pinned' : 'Pin'}</span>
       </button>
     </div>
   `;
@@ -512,10 +536,10 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
   saveBtn?.addEventListener('click', async () => {
     if (isSaved) {
       await removePhrase(phrase.id, state.currentLang);
-      showToast('Removed from phrasebook');
+      showToast('Unpinned from phrasebook');
     } else {
       await savePhrase(phrase, state.currentLang);
-      showToast('Saved to phrasebook!');
+      showToast('Pinned to phrasebook!');
     }
 
     await refreshSavedPhrases();
@@ -567,8 +591,8 @@ function renderFlashcard() {
 
   if (elements.cardTopic) elements.cardTopic.textContent = phrase.topic;
   if (elements.cardTopicBack) elements.cardTopicBack.textContent = phrase.topic;
-  if (elements.cardFlagFront) elements.cardFlagFront.textContent = langMeta.flag;
-  if (elements.cardFlagBack) elements.cardFlagBack.textContent = langMeta.flag;
+  if (elements.cardFlagFront) elements.cardFlagFront.innerHTML = langMeta.svg || '';
+  if (elements.cardFlagBack) elements.cardFlagBack.innerHTML = langMeta.svg || '';
   if (elements.cardEnglish) elements.cardEnglish.textContent = phrase.english;
   if (elements.cardTarget) elements.cardTarget.textContent = phrase.target;
   if (elements.cardPhonetic) elements.cardPhonetic.textContent = phrase.phonetic || '';

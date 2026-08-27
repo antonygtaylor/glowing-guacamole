@@ -1,28 +1,100 @@
 /**
- * API and Phrase Catalog Data Module
- * Provides structured topics, translations, and flag metadata for offline travel phrasebook.
- * Slashes ('/') have been split into individual, distinct phrases.
+ * API, Phrase Catalog, and SVG Flag Metadata Module
+ * Provides structured topics, translations, and universal SVG flag icons.
+ * Replaces OS flag emojis with inline SVGs for guaranteed cross-platform rendering (Windows, macOS, Linux, iOS, Android).
  */
 
 const LANGUAGE_FLAGS = {
-  "es-ES": { name: "Spanish", native: "Español", flag: "🇪🇸" },
-  "fr-FR": { name: "French", native: "Français", flag: "🇫🇷" },
-  "de-DE": { name: "German", native: "Deutsch", flag: "🇩🇪" },
-  "it-IT": { name: "Italian", native: "Italiano", flag: "🇮🇹" },
-  "pt-PT": { name: "Portuguese", native: "Português", flag: "🇵🇹" },
-  "nl-NL": { name: "Dutch", native: "Nederlands", flag: "🇳🇱" },
-  "pl-PL": { name: "Polish", native: "Polski", flag: "🇵🇱" },
-  "ru-RU": { name: "Russian", native: "Русский", flag: "🇷🇺" },
-  "el-GR": { name: "Greek", native: "Ελληνικά", flag: "🇬🇷" },
-  "sv-SE": { name: "Swedish", native: "Svenska", flag: "🇸🇪" },
-  "da-DK": { name: "Danish", native: "Dansk", flag: "🇩🇰" },
-  "fi-FI": { name: "Finnish", native: "Suomi", flag: "🇫🇮" },
-  "no-NO": { name: "Norwegian", native: "Norsk", flag: "🇳🇴" },
-  "cs-CZ": { name: "Czech", native: "Čeština", flag: "🇨🇿" },
-  "uk-UA": { name: "Ukrainian", native: "Українська", flag: "🇺🇦" },
-  "hu-HU": { name: "Hungarian", native: "Magyar", flag: "🇭🇺" },
-  "tr-TR": { name: "Turkish", native: "Türkçe", flag: "🇹🇷" },
-  "ja-JP": { name: "Japanese", native: "日本語", flag: "🇯🇵" }
+  "es-ES": {
+    name: "Spanish",
+    native: "Español",
+    svg: `<svg class="flag-svg" viewBox="0 0 750 500" xmlns="http://www.w3.org/2000/svg"><rect width="750" height="500" fill="#c60b1e"/><rect y="125" width="750" height="250" fill="#ffc400"/></svg>`
+  },
+  "fr-FR": {
+    name: "French",
+    native: "Français",
+    svg: `<svg class="flag-svg" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#002395"/><rect x="300" width="300" height="600" fill="#fff"/><rect x="600" width="300" height="600" fill="#ed2939"/></svg>`
+  },
+  "de-DE": {
+    name: "German",
+    native: "Deutsch",
+    svg: `<svg class="flag-svg" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg"><rect width="5" height="3" fill="#000"/><rect y="1" width="5" height="2" fill="#dd0000"/><rect y="2" width="5" height="1" fill="#ffce00"/></svg>`
+  },
+  "it-IT": {
+    name: "Italian",
+    native: "Italiano",
+    svg: `<svg class="flag-svg" viewBox="0 0 1500 1000" xmlns="http://www.w3.org/2000/svg"><rect width="500" height="1000" fill="#009246"/><rect x="500" width="500" height="1000" fill="#fff"/><rect x="1000" width="500" height="1000" fill="#ce2b37"/></svg>`
+  },
+  "pt-PT": {
+    name: "Portuguese",
+    native: "Português",
+    svg: `<svg class="flag-svg" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"><rect width="240" height="400" fill="#046a38"/><rect x="240" width="360" height="400" fill="#da291c"/><circle cx="240" cy="200" r="80" fill="#ffc400"/></svg>`
+  },
+  "nl-NL": {
+    name: "Dutch",
+    native: "Nederlands",
+    svg: `<svg class="flag-svg" viewBox="0 0 9 6" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="6" fill="#ae1c28"/><rect y="2" width="9" height="4" fill="#fff"/><rect y="4" width="9" height="2" fill="#21468b"/></svg>`
+  },
+  "pl-PL": {
+    name: "Polish",
+    native: "Polski",
+    svg: `<svg class="flag-svg" viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="10" fill="#fff"/><rect y="5" width="16" height="5" fill="#dc143c"/></svg>`
+  },
+  "ru-RU": {
+    name: "Russian",
+    native: "Русский",
+    svg: `<svg class="flag-svg" viewBox="0 0 9 6" xmlns="http://www.w3.org/2000/svg"><rect width="9" height="6" fill="#fff"/><rect y="2" width="9" height="4" fill="#0039a6"/><rect y="4" width="9" height="2" fill="#d52b1e"/></svg>`
+  },
+  "el-GR": {
+    name: "Greek",
+    native: "Ελληνικά",
+    svg: `<svg class="flag-svg" viewBox="0 0 27 18" xmlns="http://www.w3.org/2000/svg"><rect width="27" height="18" fill="#0d5eaf"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#0d5eaf"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>`
+  },
+  "sv-SE": {
+    name: "Swedish",
+    native: "Svenska",
+    svg: `<svg class="flag-svg" viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="10" fill="#006aa7"/><rect x="5" width="2" height="10" fill="#fecc00"/><rect y="4" width="16" height="2" fill="#fecc00"/></svg>`
+  },
+  "da-DK": {
+    name: "Danish",
+    native: "Dansk",
+    svg: `<svg class="flag-svg" viewBox="0 0 370 280" xmlns="http://www.w3.org/2000/svg"><rect width="370" height="280" fill="#c8102e"/><rect x="120" width="40" height="280" fill="#fff"/><rect y="120" width="370" height="40" fill="#fff"/></svg>`
+  },
+  "fi-FI": {
+    name: "Finnish",
+    native: "Suomi",
+    svg: `<svg class="flag-svg" viewBox="0 0 1800 1100" xmlns="http://www.w3.org/2000/svg"><rect width="1800" height="1100" fill="#fff"/><rect x="500" width="300" height="1100" fill="#002f6c"/><rect y="400" width="1800" height="300" fill="#002f6c"/></svg>`
+  },
+  "no-NO": {
+    name: "Norwegian",
+    native: "Norsk",
+    svg: `<svg class="flag-svg" viewBox="0 0 22 16" xmlns="http://www.w3.org/2000/svg"><rect width="22" height="16" fill="#ba0c2f"/><path d="M6 0v16M0 6h22" stroke="#fff" stroke-width="4"/><path d="M6 0v16M0 6h22" stroke="#00205b" stroke-width="2"/></svg>`
+  },
+  "cs-CZ": {
+    name: "Czech",
+    native: "Čeština",
+    svg: `<svg class="flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="2" fill="#d7141a"/><rect width="3" height="1" fill="#fff"/><polygon points="0,0 1.5,1 0,2" fill="#11457e"/></svg>`
+  },
+  "uk-UA": {
+    name: "Ukrainian",
+    native: "Українська",
+    svg: `<svg class="flag-svg" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="2" fill="#ffd700"/><rect width="3" height="1" fill="#0057b7"/></svg>`
+  },
+  "hu-HU": {
+    name: "Hungarian",
+    native: "Magyar",
+    svg: `<svg class="flag-svg" viewBox="0 0 6 3" xmlns="http://www.w3.org/2000/svg"><rect width="6" height="3" fill="#436f4d"/><rect width="6" height="2" fill="#fff"/><rect width="6" height="1" fill="#cd2a3e"/></svg>`
+  },
+  "tr-TR": {
+    name: "Turkish",
+    native: "Türkçe",
+    svg: `<svg class="flag-svg" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="800" fill="#e30a17"/><circle cx="425" cy="400" r="200" fill="#fff"/><circle cx="475" cy="400" r="160" fill="#e30a17"/></svg>`
+  },
+  "ja-JP": {
+    name: "Japanese",
+    native: "日本語",
+    svg: `<svg class="flag-svg" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#fff"/><circle cx="450" cy="300" r="180" fill="#bc002d"/></svg>`
+  }
 };
 
 const PHRASE_CATALOG = {
