@@ -445,19 +445,19 @@ function createPhraseCard(phrase, isSaved, isSavedTab = false) {
 
 /* Audio Playback Handling */
 async function playPhraseAudio(phrase) {
+  const targetLang = phrase.lang || state.currentLang;
   try {
-    // Try offline audio Blob first
-    const cachedBlob = await getAudioBlob(phrase.id, state.currentLang);
-    if (cachedBlob) {
+    const cachedBlob = await getAudioBlob(phrase.id, targetLang);
+    if (cachedBlob && cachedBlob.size > 500) {
       await playAudioBlob(cachedBlob);
       return;
     }
   } catch (e) {
-    console.warn('Could not play offline blob:', e);
+    console.warn('Cached blob playback unavailable, using speech synthesis:', e);
   }
 
-  // Fallback to Web Speech Synthesis API
-  speakText(phrase.target, state.currentLang);
+  // Use Speech Synthesis API as primary or fallback
+  speakText(phrase.target, targetLang);
 }
 
 /* PRACTICE TAB LOGIC */
