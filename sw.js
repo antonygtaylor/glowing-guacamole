@@ -1,4 +1,4 @@
-const CACHE_NAME = 'travel-phrase-v1';
+const CACHE_NAME = 'travel-phrase-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -39,9 +39,16 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-/* Fetch Strategy: Cache-first with network fallback */
+/* Fetch Strategy: Cache-first for same-origin app shell & Google Fonts only */
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+
+  // Skip intercepting third-party cross-origin requests (e.g. external TTS endpoints)
+  if (url.origin !== location.origin && !url.hostname.includes('fonts.google') && !url.hostname.includes('gstatic')) {
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
@@ -50,21 +57,22 @@ self.addEventListener('fetch', (event) => {
       }
 
       return fetch(event.request).then((networkResponse) => {
-        // Cache valid HTTP responses dynamically
-        if (networkResponse && networkResponse.status === 200) {
+        // Cache valid same-origin responses dynamically
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
         }
         return networkResponse;
-      }).catch(() => {
-        // Offline fallback if request is HTML page
-        const acceptHeader = event.request.headers.get('accept') || '';
-        if (acceptHeader.includes('text/html')) {
-          return caches.match('./index.html');
-        }
       });
+    }).catch((err) => {
+      // Return HTML page fallback if request is for document navigation
+      const acceptHeader = event.request.headers.get('accept') || '';
+      if (acceptHeader.includes('text/html')) {
+        return caches.match('./index.html');
+      }
+      return new Response('Network error occurred', { status: 408, headers: { 'Content-Type': 'text/plain' } });
     })
   );
 });

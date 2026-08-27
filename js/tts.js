@@ -1,7 +1,5 @@
 /**
  * Text-to-Speech (TTS) and Offline Audio Generation Module
- * Downloads real MP3 audio recordings from free public TTS API endpoint
- * and caches them as binary Blobs in IndexedDB for full offline device playback.
  */
 
 let globalAudioCtx = null;
@@ -68,37 +66,35 @@ function speakText(text, langCode, onEndCallback = null) {
 }
 
 /**
- * Downloads actual spoken MP3 audio recording from free public endpoint
- * and stores it as a binary Blob in IndexedDB for complete offline playback.
+ * Caches audio blob if available or falls back gracefully without throwing unhandled CORS exceptions.
  */
 async function generateAndCacheAudioBlob(id, text, langCode) {
   try {
-    // First check if already cached in IndexedDB
+    // Check if already cached in IndexedDB
     const existingBlob = await getAudioBlob(id, langCode);
     if (existingBlob && existingBlob.size > 0) {
       return existingBlob;
     }
 
-    // Download audio recording from free public endpoint
+    // Attempt to download audio recording if CORS allows, otherwise return null quietly
     const audioBlob = await fetchRealAudioBlob(text, langCode);
     if (audioBlob) {
       await storeAudioBlob(id, langCode, audioBlob);
       return audioBlob;
     }
   } catch (err) {
-    console.warn('Audio Blob caching error:', err);
+    // Quietly catch CORS/fetch errors; SpeechSynthesis will handle playback
   }
   return null;
 }
 
 /**
- * Fetches real audio MP3 Blob for a given phrase and language code from free endpoint.
+ * Safely fetches audio Blob from endpoints if accessible, catching network/CORS rejections cleanly.
  */
 async function fetchRealAudioBlob(text, langCode) {
   const shortLang = langCode.split('-')[0] || 'es';
   const encodedText = encodeURIComponent(text);
 
-  // Free public audio endpoints (Translate TTS & Speech endpoint)
   const endpoints = [
     `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=${shortLang}&client=tw-ob`,
     `https://dict.youdao.com/dictvoice?audio=${encodedText}&le=${shortLang}`
@@ -106,15 +102,15 @@ async function fetchRealAudioBlob(text, langCode) {
 
   for (const url of endpoints) {
     try {
-      const response = await fetch(url, { mode: 'cors' });
-      if (response.ok) {
-        const blob = await response.blob();
+      const response = await fetch(url, { mode: 'cors' }).catch(() => null);
+      if (response && response.ok) {
+        const blob = await response.blob().catch(() => null);
         if (blob && blob.size > 500) {
           return blob;
         }
       }
     } catch (e) {
-      console.warn('Fetch audio failed from endpoint:', url, e);
+      // Ignore CORS restrictions on browser origin
     }
   }
 
@@ -139,7 +135,6 @@ function playAudioBlob(blob) {
             source.onended = () => resolve(true);
             source.start(0);
           }, (err) => {
-            console.warn('AudioContext decode failed, trying HTMLAudio fallback:', err);
             fallbackPlayHTMLAudio(blob, resolve, reject);
           });
         };
